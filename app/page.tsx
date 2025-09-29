@@ -4,110 +4,146 @@ import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { setRequestLocale } from "next-intl/server";
 import Link from "next/link";
+import { Navbar03 } from "@/components/ui/shadcn-io/navbar-03";
+import { HeroHighlight, Highlight } from "@/components/ui/hero-highlight";
+import { motion } from "motion/react";
+import { Footer2 } from "@/components/footer2";
+import { BeamComponent } from "@/components/beam-component";
+import { NumberTicker } from "@/components/ui/number-ticker";
+import { TweetCard } from "@/components/ui/tweet-card";
+import { VideoText } from "@/components/ui/video-text";
+import { cn } from "@/lib/utils";
+import { DotPattern } from "@/components/ui/dot-pattern";
+import { WavyBackground } from "@/components/ui/wavy-background";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
 
   const t = useTranslations("HomePage");
+  const router = useRouter();
+
+  const handleSignInClick = () => {
+    console.log("Sign In clicked");
+    router.push("/signin");
+  };
+
+  const handleCtaClick = () => {
+    console.log("Get Started clicked");
+    router.push("/signin");
+  };
 
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
+    <>
+      <Navbar03
+        signInText="Sign In"
+        signInHref="/signin"
+        ctaText="Get Started"
+        ctaHref="/signin"
+        onSignInClick={handleSignInClick}
+        onCtaClick={handleCtaClick}
+      />
+      {/* <HeroHighlight>
+        <motion.h1
+          initial={{
+            opacity: 0,
+            y: 20,
+          }}
+          animate={{
+            opacity: 1,
+            y: [20, -5, 0],
+          }}
+          transition={{
+            duration: 0.5,
+            ease: [0.4, 0.0, 0.2, 1],
+          }}
+          className="text-2xl px-4 md:text-4xl lg:text-5xl font-bold text-neutral-700 dark:text-white max-w-4xl leading-relaxed lg:leading-snug text-center mx-auto "
+        >
+          With insomnia, nothing&apos;s real. Everything is far away. Everything
+          is a{" "}
+          <Highlight className="text-black dark:text-white">
+            copy, of a copy, of a copy.
+          </Highlight>
+        </motion.h1>
+      </HeroHighlight> */}
+      <div className="relative h-screen w-full overflow-hidden flex flex-col items-center justify-center px-20 gap-2">
+        <DotPattern
+          className={cn(
+            "[mask-image:radial-gradient(800px_circle_at_center,black,transparent)] -z-10"
+          )}
         />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            {t("title")}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+        <motion.p
+          initial={{
+            opacity: 0,
+            y: 20,
+          }}
+          animate={{
+            opacity: 1,
+            y: [20, -5, 0],
+          }}
+          transition={{
+            duration: 1,
+            ease: [0.4, 0.0, 0.2, 1],
+          }}
+          className="text-3xl uppercase"
+        >Distribusi kontenmu 121x lebih cepat</motion.p>
+        <motion.div
+          initial={{
+            opacity: 0,
+            y: 20,
+          }}
+          animate={{
+            opacity: 1,
+            y: [20, -5, 0],
+          }}
+          transition={{
+            duration: 1,
+            ease: [0.4, 0.0, 0.2, 1],
+          }}
+          className="h-[220px] w-full relative overflow-hidden flex flex-col items-center justify-center"
+        >
+          <VideoText fontSize={20} src="https://cdn.magicui.design/ocean-small.webm">Viral Saiki</VideoText>
+        </motion.div>
+        <motion.h1
+          initial={{
+            opacity: 0,
+            y: 20,
+          }}
+          animate={{
+            opacity: 1,
+            y: [20, -5, 0],
+          }}
+          transition={{
+            duration: 1,
+            ease: [0.4, 0.0, 0.2, 1],
+          }}
+          className="text-2xl px-4 md:text-4xl lg:text-5xl font-bold text-neutral-700 dark:text-white max-w-4xl leading-relaxed lg:leading-snug text-center mx-auto uppercase"
+        >- Selalu viral -</motion.h1>
+      </div>
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+      <BeamComponent />
+
+      <section className="flex justify-center items-center gap-10">
+        <div className="flex flex-col items-center gap-5">
+          <Image src="/images/web/dummy.png" className="w-70" alt="hero" width={1000} height={1000} />
+          <NumberTicker className="text-3xl" value={1000000} delay={2} />
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-        <Link href="/" locale="id">ID</Link>
-        <Link href="/" locale="en">EN</Link>
-      </footer>
-    </div>
+        <div className="flex flex-col items-center gap-5">
+          <Image src="/images/web/dummy.png" className="w-50" alt="hero" width={1000} height={1000} />
+          <NumberTicker className="text-3xl" value={4426900} delay={2} />
+        </div>
+        <div className="flex flex-col items-center gap-5">
+          <Image src="/images/web/dummy.png" className="w-80" alt="hero" width={1000} height={1000} />
+          <NumberTicker className="text-3xl" value={10000000} delay={2} />
+        </div>
+      </section>
+
+      <section>
+        {/* <TweetCard id="1869441984940986833" /> */}
+      </section>
+
+
+
+      <Footer2 />
+    </>
   );
 }

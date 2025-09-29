@@ -3,18 +3,12 @@
 import * as React from "react"
 import {
   IconDashboard,
-  IconHelp,
   IconInnerShadowTop,
-  IconListDetails,
-  IconReport,
-  IconSearch,
-  IconSettings,
   IconUsers,
+  IconMoneybag,
 } from "@tabler/icons-react"
-
-import { NavDocuments } from "@/components/nav-documents"
+import Link from "next/link"
 import { NavMain } from "@/components/nav-main"
-import { NavSecondary } from "@/components/nav-secondary"
 import { NavUser } from "@/components/nav-user"
 import {
   Sidebar,
@@ -34,14 +28,29 @@ const data = {
   },
   navMain: [
     {
-      title: "Contest",
-      url: "#",
+      title: "Overview",
+      url: "/dashboard/clipper",
       icon: IconDashboard,
+    },
+    {
+      title: "Posts",
+      url: "/dashboard/clipper/posts",
+      icon: IconDashboard,
+    },
+    {
+      title: "Social Accounts",
+      url: "/dashboard/clipper/social-accounts",
+      icon: IconUsers,
+    },
+    {
+      title: "Payout",
+      url: "/dashboard/clipper/payouts",
+      icon: IconMoneybag,
     },
   ],
 }
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+export function ClipperSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar collapsible="offcanvas" {...props}>
       <SidebarHeader>
@@ -51,10 +60,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               asChild
               className="data-[slot=sidebar-menu-button]:!p-1.5"
             >
-              <a href="#">
+              <Link href="/dashboard/clipper">
                 <IconInnerShadowTop className="!size-5" />
                 <span className="text-base font-semibold">Viral Saiki</span>
-              </a>
+              </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
