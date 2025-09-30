@@ -17,6 +17,9 @@ import {
 import { cn } from '@/lib/utils';
 import type { ComponentProps } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
+import { authClient } from '@/lib/auth-client';
+
+type Session = typeof authClient.$Infer.Session;
 
 // Simple logo component for the navbar
 const Logo = (props: React.SVGAttributes<SVGElement>) => {
@@ -120,6 +123,8 @@ export const Navbar03 = React.forwardRef<HTMLElement, Navbar03Props>(
     const containerRef = useRef<HTMLElement>(null);
     const router = useRouter();
     const url = usePathname();
+
+    const session: Session | null = authClient.getSession();
 
     const handleSignInClick = () => {
       console.log("Sign In clicked");
@@ -252,31 +257,45 @@ export const Navbar03 = React.forwardRef<HTMLElement, Navbar03Props>(
             </div>
           </div>
           {/* Right side */}
-          <div className="flex items-center gap-3">
-            <Button
-              variant="ghost"
-              size="sm"
-              className="text-sm font-medium hover:bg-accent hover:text-accent-foreground"
-              onClick={(e) => {
-                e.preventDefault();
-                if (onSignInClick) onSignInClick();
-                handleSignInClick();
-              }}
-            >
-              {signInText}
-            </Button>
+          {session !== null ? (
             <Button
               size="sm"
               className="text-sm font-medium px-4 h-9 rounded-md shadow-sm"
               onClick={(e) => {
                 e.preventDefault();
-                if (onCtaClick) onCtaClick();
-                handleCtaClick();
+                router.push('/dashboard');
               }}
             >
-              {ctaText}
+              Dashboard
             </Button>
-          </div>
+          ) : (
+            <div className="flex items-center gap-3">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-sm font-medium hover:bg-accent hover:text-accent-foreground"
+                onClick={(e) => {
+                  e.preventDefault();
+                  if (onSignInClick) onSignInClick();
+                  handleSignInClick();
+                }}
+              >
+                {signInText}
+              </Button>
+              <Button
+                size="sm"
+                className="text-sm font-medium px-4 h-9 rounded-md shadow-sm"
+                onClick={(e) => {
+                  e.preventDefault();
+                  if (onCtaClick) onCtaClick();
+                  handleCtaClick();
+                }}
+              >
+                {ctaText}
+              </Button>
+            </div>
+          )
+          }
         </div>
       </header>
     );
