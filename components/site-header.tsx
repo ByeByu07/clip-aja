@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import { SidebarTrigger } from "@/components/ui/sidebar"
 import Link from "next/link"
+import { ArrowRight } from "lucide-react"
 
 interface SiteHeaderProps {
   title: string
@@ -20,7 +21,7 @@ export function SiteHeader({ title, link, linkText }: SiteHeaderProps) {
         />
         <h1 className="text-base font-medium">{title}</h1>
         <div className="ml-auto flex items-center gap-2">
-          <Button variant="default" asChild size="sm" className="hidden sm:flex">
+          <Button variant="default" asChild size="sm" className="hidden sm:flex capitalize">
             {/* <a
               href="https://github.com/shadcn-ui/ui/tree/main/apps/v4/app/(examples)/dashboard"
               rel="noopener noreferrer"
@@ -30,7 +31,7 @@ export function SiteHeader({ title, link, linkText }: SiteHeaderProps) {
               GitHub
             </a> */}
             <Link href={link}>
-              {linkText}
+              {linkText} <ArrowRight className="size-4" />
             </Link>
           </Button>
         </div>

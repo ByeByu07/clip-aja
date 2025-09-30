@@ -17,7 +17,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     >
       <ClipperSidebar variant="inset"/>
       <SidebarInset>
-        <SiteHeader title="Dashboard Clipper" link="/dashboard" linkText="Ganti ke akun utama" />
+        <SiteHeader title="Dashboard Clipper" link="/dashboard" linkText="akun utama" />
         <div className="flex flex-1 flex-col">
           {children}
         </div>
