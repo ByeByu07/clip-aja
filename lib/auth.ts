@@ -10,13 +10,23 @@ export const auth = betterAuth({
         schema: schema
     }),
     emailAndPassword: { enabled: true },
-    plugins: [username()]
-    // socialProviders: {
-    //     github: {
-    //         clientId: process.env.GITHUB_CLIENT_ID as string, 
-    //         clientSecret: process.env.GITHUB_CLIENT_SECRET as string,
-    //     }
-    // }
+    plugins: [username()],
+    socialProviders: {
+        tiktok: {
+            clientSecret: process.env.TIKTOK_CLIENT_SECRET as string, 
+            clientKey: process.env.TIKTOK_CLIENT_KEY as string, 
+            redirectURI: "https://2cd45fb9fcc8.ngrok-free.app/api/auth/callback/tiktok",
+        },  
+    },
+    account: {
+        accountLinking : {
+            enabled: true
+        }
+    },
+    trustedOrigins: ["http://localhost:3000", "https://2cd45fb9fcc8.ngrok-free.app"],
+    onError: (error) => {
+        console.error(error)
+    }
 })
 
 // export default auth

@@ -3,6 +3,14 @@ import createNextIntlPlugin from "next-intl/plugin";
 
 const nextConfig: NextConfig = {
   /* config options here */
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "p16-sign-sg.tiktokcdn.com",
+      }
+    ]
+  }
 };
 
 const withNextIntl = createNextIntlPlugin('./lib/i18n-request.ts');
