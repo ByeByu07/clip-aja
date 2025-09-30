@@ -122,7 +122,7 @@ export const CreateNewContestModal = ({ onClose }: { onClose: () => void }) => {
     };
 
     return (
-        <Card className="w-full mx-auto p-6 max-h-[90vh] overflow-y-auto">
+        <Card className="w-full mx-auto p-6 h-full overflow-y-auto">
             <div className="flex justify-between items-center mb-6">
                 <h2 className="text-2xl font-bold">Buat Kontes Baru</h2>
                 <button

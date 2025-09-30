@@ -50,7 +50,7 @@ export default function Page() {
         <div className="flex flex-1 flex-col">
           <div className="@container/main flex flex-1 flex-col gap-2 px-4">
             <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
-              <Button className={cn("w-full", isCreateNewContestModalOpen ? "hidden" : "", "hover:rotate-1 hover:bg-green-500 transition-all duration-500 ease-in-out")} variant="outline" onClick={() => setIsCreateNewContestModalOpen(true)}><PlusIcon className="mr-2 h-4 w-4" /> Buat Sayembara</Button>
+              <Button className={cn("w-full", isCreateNewContestModalOpen ? "hidden" : "", "hover:-translate-y-1 hover:bg-green-500 transition-all duration-500 ease-in-out")} variant="outline" onClick={() => setIsCreateNewContestModalOpen(true)}><PlusIcon className="mr-2 h-4 w-4" /> Buat Sayembara</Button>
             </div>
             {isCreateNewContestModalOpen && (
               <CreateNewContestModal onClose={() => setIsCreateNewContestModalOpen(false)} />
