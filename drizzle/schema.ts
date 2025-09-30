@@ -12,14 +12,11 @@ export const user = pgTable("user", {
     
     // Auth fields
     name: text('name'),
-    displayUsername: text('displayUsername'),
     username: text('username'),
+    displayUsername: text('displayUsername'),
     email: text('email').notNull().unique(),
     emailVerified: boolean('emailVerified').default(false).notNull(),
     image: text('image'),
-    
-    // Password for local auth (optional if using OAuth)
-    passwordHash: text('passwordHash'),
     
     // Owner-specific fields
     totalSpent: decimal('totalSpent', { precision: 10, scale: 2 }).default('0'),
@@ -78,7 +75,7 @@ export const verification = pgTable("verification", {
 
 // Profile pages for contest owners
 export const pages = pgTable("pages", {
-    id: integer('id').primaryKey().generatedAlwaysAsIdentity(),
+    id: text('id').primaryKey().$defaultFn(() => crypto.randomUUID()),
     userId: text('userId').notNull().references(() => user.id),
     alias: text('alias').notNull().unique(),
     slug: text('slug').notNull().unique(),
@@ -96,7 +93,7 @@ export const pages = pgTable("pages", {
 
 // Contests
 export const contests = pgTable("contests", {
-    id: integer('id').primaryKey().generatedAlwaysAsIdentity(),
+    id: text('id').primaryKey().$defaultFn(() => crypto.randomUUID()),
     userId: text('userId').notNull().references(() => user.id),
     title: text('title').notNull(),
     description: text('description'),
@@ -117,8 +114,8 @@ export const contests = pgTable("contests", {
 
 // Transaction for contest funding
 export const transactionContests = pgTable("transactionContests", {
-    id: integer('id').primaryKey().generatedAlwaysAsIdentity(),
-    contestId: integer('contestId').notNull().references(() => contests.id),
+    id: text('id').primaryKey().$defaultFn(() => crypto.randomUUID()),
+    contestId: text('contestId').notNull().references(() => contests.id),
     userId: text('userId').notNull().references(() => user.id),
     grossAmount: decimal('grossAmount', { precision: 10, scale: 2 }).notNull(),
     netAmount: decimal('netAmount', { precision: 10, scale: 2 }).notNull(),
@@ -137,10 +134,10 @@ export const transactionContests = pgTable("transactionContests", {
 
 // Posts submitted by clippers
 export const posts = pgTable("posts", {
-    id: integer('id').primaryKey().generatedAlwaysAsIdentity(),
-    contestId: integer('contestId').notNull().references(() => contests.id),
+    id: text('id').primaryKey().$defaultFn(() => crypto.randomUUID()),
+    contestId: text('contestId').notNull().references(() => contests.id),
     userId: text('userId').notNull().references(() => user.id),
-    socialAccountId: integer('socialAccountId').references(() => account.id),
+    accountId: text('accountId').references(() => account.id),
     url: text('url').notNull().unique(),
     status: postStatusEnum('status').default('submitted'),
     claimStatus: postClaimStatusEnum('claimStatus').default('pending'),
@@ -159,8 +156,8 @@ export const posts = pgTable("posts", {
 
 // Post view history
 export const postViewHistory = pgTable("postViewHistory", {
-    id: integer('id').primaryKey().generatedAlwaysAsIdentity(),
-    postId: integer('postId').notNull().references(() => posts.id),
+    id: text('id').primaryKey().$defaultFn(() => crypto.randomUUID()),
+    postId: text('postId').notNull().references(() => posts.id),
     views: integer('views').notNull(),
     viewsChange: integer('viewsChange').default(0),
     checkedAt: timestamp('checkedAt', { withTimezone: true }).defaultNow()
@@ -168,7 +165,7 @@ export const postViewHistory = pgTable("postViewHistory", {
 
 // User payment methods
 export const userPaymentMethods = pgTable("userPaymentMethods", {
-    id: integer('id').primaryKey().generatedAlwaysAsIdentity(),
+    id: text('id').primaryKey().$defaultFn(() => crypto.randomUUID()),
     userId: text('userId').notNull().references(() => user.id),
     type: text('type').notNull(),
     bankName: text('bankName'),
@@ -188,10 +185,10 @@ export const userPaymentMethods = pgTable("userPaymentMethods", {
 
 // Payouts to clippers
 export const payouts = pgTable("payouts", {
-    id: integer('id').primaryKey().generatedAlwaysAsIdentity(),
+    id: text('id').primaryKey().$defaultFn(() => crypto.randomUUID()),
     userId: text('userId').notNull().references(() => user.id),
-    postId: integer('postId').references(() => posts.id),
-    paymentMethodId: integer('paymentMethodId').references(() => userPaymentMethods.id),
+    postId: text('postId').references(() => posts.id),
+    paymentMethodId: text('paymentMethodId').references(() => userPaymentMethods.id),
     amount: decimal('amount', { precision: 10, scale: 2 }).notNull(),
     platformFee: decimal('platformFee', { precision: 10, scale: 2 }).default('0'),
     netAmount: decimal('netAmount', { precision: 10, scale: 2 }).notNull(),
@@ -209,8 +206,8 @@ export const payouts = pgTable("payouts", {
 
 // Contest reviews
 export const contestReviews = pgTable("contestReviews", {
-    id: integer('id').primaryKey().generatedAlwaysAsIdentity(),
-    contestId: integer('contestId').notNull().references(() => contests.id),
+    id: text('id').primaryKey().$defaultFn(() => crypto.randomUUID()),
+    contestId: text('contestId').notNull().references(() => contests.id),
     userId: text('userId').notNull().references(() => user.id),
     rating: integer('rating').notNull(),
     comment: text('comment'),
@@ -220,8 +217,8 @@ export const contestReviews = pgTable("contestReviews", {
 
 // Page views analytics
 export const pageViews = pgTable("pageViews", {
-    id: integer('id').primaryKey().generatedAlwaysAsIdentity(),
-    pageId: integer('pageId').notNull().references(() => pages.id),
+    id: text('id').primaryKey().$defaultFn(() => crypto.randomUUID()),
+    pageId: text('pageId').notNull().references(() => pages.id),
     visitorId: text('visitorId'),
     referrer: text('referrer'),
     viewedAt: timestamp('viewedAt', { withTimezone: true }).defaultNow()
@@ -229,13 +226,13 @@ export const pageViews = pgTable("pageViews", {
 
 // Notifications
 export const notifications = pgTable("notifications", {
-    id: integer('id').primaryKey().generatedAlwaysAsIdentity(),
+    id: text('id').primaryKey().$defaultFn(() => crypto.randomUUID()),
     userId: text('userId').notNull().references(() => user.id),
     type: text('type').notNull(),
     title: text('title').notNull(),
     message: text('message'),
     relatedEntityType: text('relatedEntityType'),
-    relatedEntityId: integer('relatedEntityId'),
+    relatedEntityId: text('relatedEntityId'),
     isRead: boolean('isRead').default(false),
     createdAt: timestamp('createdAt', { withTimezone: true }).defaultNow()
 });
