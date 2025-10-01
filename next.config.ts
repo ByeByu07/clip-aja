@@ -8,6 +8,10 @@ const nextConfig: NextConfig = {
       {
         protocol: "https",
         hostname: "p16-sign-sg.tiktokcdn.com",
+      },
+      {
+        protocol: "https",
+        hostname: "r2.rivalsaiki.hackathon.bayu-ai.dev",
       }
     ]
   }

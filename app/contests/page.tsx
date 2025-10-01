@@ -22,11 +22,26 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Calendar } from "lucide-react";
 import { ArrowRight } from "lucide-react";
+import { useEffect, useState } from "react";
+import { ContestListMainPage } from "@/components/contest-list-main-page";
+import { Loader2 } from "lucide-react";
 
 export default function Home() {
 
-    const t = useTranslations("HomePage");
-    const router = useRouter();
+    const [contests, setContests] = useState<any>(null);
+    const [loading, setLoading] = useState(false);
+
+    const fetchContests = async () => {
+        setLoading(true);
+        const response = await fetch('/api/contests?status=active');
+        const data = await response.json();
+        setContests(data.data);
+        setLoading(false);
+    };
+
+    useEffect(() => {
+        fetchContests();
+    }, []);
 
     return (
         <>
@@ -38,35 +53,16 @@ export default function Home() {
             />
             <div className="flex flex-col gap-5 px-10 mt-10">
                 <section className="flex flex-col gap-5">
-                    {Array.from({ length: 20 }).map((_, index) => (
-                        <Card key={index} className="rounded-none">
-                            <CardContent className="flex justify-between">
-                                <div className="flex flex-col gap-5 w-full px-10">
-                                    <Badge className="text-xs">Clip</Badge>
-                                    <Link href={`/contests/${index}`} className="text-xl font-bold underline flex items-center gap-2">Create a clip from our podcast Lorem, ipsum dolor sit amet consectetur adipisicing elit. Minus, praesentium? <ArrowRight /></Link>
-                                    <div className="flex items-center gap-2 justify-start">
-                                        <p className="text-2xl font-thin basis-1/2">Rp. 1000 / 1000 views</p>
-                                        {/* <div className="flex items-center gap-2 basis-1/2">
-                                            <p>50%</p>
-                                            <Progress value={50 / index} />
-                                        </div>
-                                        <p className="flex items-center gap-2 basis-1/2"><Calendar /> 2025-09-30</p> */}
-                                    </div>
-                                </div>
-                                {/* <div className="flex gap-2 flex-col items-center">
-                                    <p className="">Rp. 1000 / 1000 views</p>
-                                    <div className="flex items-center gap-2 w-full">
-                                        <p>50%</p>
-                                        <Progress value={50 / index} />
-                                    </div>
-                                    <p>Deadline: 2025-09-30</p>
-                                    <Button className="w-40">Join</Button>
-                                </div> */}
-                            </CardContent>
-                        </Card>
-                    ))}
+                    {/* <h1 className="text-5xl text-center font-bold my-10">Cari Sayemmmbaraaamu</h1> */}
+                    {loading ? (
+                        <div className="flex items-center justify-center h-64">
+                            <Loader2 className="w-8 h-8 animate-spin" />
+                        </div>
+                    ) : contests ? <ContestListMainPage contests={contests} />
+                        : (
+                            <p className="text-center">Tidak ada sayembara</p>
+                        )}
                 </section>
-
                 <Footer2 />
             </div>
         </>
