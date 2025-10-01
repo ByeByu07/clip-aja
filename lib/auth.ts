@@ -15,7 +15,7 @@ export const auth = betterAuth({
         tiktok: {
             clientSecret: process.env.TIKTOK_CLIENT_SECRET as string, 
             clientKey: process.env.TIKTOK_CLIENT_KEY as string, 
-            redirectURI: "https://2cd45fb9fcc8.ngrok-free.app/api/auth/callback/tiktok",
+            redirectURI: process.env.NODE_ENV === "development" ? `${process.env.BETTER_AUTH_TIKTOK_URL}/api/auth/callback/tiktok` : `${process.env.NEXT_PUBLIC_APP_URL}/api/auth/callback/tiktok`,
         },  
     },
     account: {
@@ -23,7 +23,7 @@ export const auth = betterAuth({
             enabled: true
         }
     },
-    trustedOrigins: ["http://localhost:3000", "https://2cd45fb9fcc8.ngrok-free.app"],
+    trustedOrigins: ["http://localhost:3000", "https://ffa0ac0f7a04.ngrok-free.app"],
     onError: (error) => {
         console.error(error)
     }

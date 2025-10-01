@@ -30,7 +30,8 @@ export default function Page() {
             scopes: ["user.info.profile", "video.list", "user.info.basic"],
             fetchOptions: {
                 body: {
-                    redirect_url: "https://2cd45fb9fcc8.ngrok-free.app/api/auth/callback/tiktok",
+                    redirect_url: "https://ffa0ac0f7a04.ngrok-free.app/api/auth/callback/tiktok",
+                    // redirect_url: process.env.NODE_ENV === "development" ? `${process.env.BETTER_AUTH_TIKTOK_URL}/api/auth/callback/tiktok` : `${process.env.NEXT_PUBLIC_APP_URL}/api/auth/callback/tiktok`,
                 }
             }
         })
