@@ -14,6 +14,7 @@ import { CreateNewContestModal } from "@/components/create-new-contest-modal"
 import { ContestDetails } from "@/components/contest-details"
 import { authClient } from "@/lib/auth-client"
 import { contests } from "@/drizzle/schema"
+import { Loader2 } from "lucide-react"
 
 type Session = typeof authClient.$Infer.Session;
 type Contest = typeof contests.$inferSelect;
@@ -23,12 +24,15 @@ export default function Page() {
   const { data: session } = authClient.getSession()
   const [isCreateNewContestModalOpen, setIsCreateNewContestModalOpen] = useState(false)
   const [contest, setContest] = useState<Contest[] | null>(null)
+  const [loading, setLoading] = useState(false)
 
   const fetchContests = async () => {
+    setLoading(true);
     const response = await fetch('/api/contests');
     const data = await response.json();
     console.log(data);
     setContest(data.data);
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -53,9 +57,13 @@ export default function Page() {
               <Button className={cn("w-full", isCreateNewContestModalOpen ? "hidden" : "", "hover:-translate-y-1 hover:bg-green-500 transition-all duration-500 ease-in-out")} variant="outline" onClick={() => setIsCreateNewContestModalOpen(true)}><PlusIcon className="mr-2 h-4 w-4" /> Buat Sayembara</Button>
             </div>
             {isCreateNewContestModalOpen && (
-              <CreateNewContestModal onClose={() => setIsCreateNewContestModalOpen(false)} />
+              <CreateNewContestModal onClose={() => setIsCreateNewContestModalOpen(false)} onContestCreated={() => fetchContests()} />
             )}
-            <ContestDetails contest={contest} onClose={() => setContest(null)} />
+            {loading ? (
+              <div className="flex items-center justify-center h-64">
+                <Loader2 className="w-8 h-8 animate-spin" />
+              </div>
+            ) : contest && <ContestDetails contest={contest} onClose={() => setContest(null)} />}
           </div>
         </div>
       </SidebarInset>

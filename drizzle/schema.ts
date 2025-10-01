@@ -1,7 +1,7 @@
 import { pgTable, text, boolean, timestamp, integer, decimal, pgEnum } from "drizzle-orm/pg-core";
 
 // Enums
-export const contestTypeEnum = pgEnum('contest_type', ['clip', 'ugc', 'softSelling']);
+export const contestTypeEnum = pgEnum('contest_type', ['clip', 'ugc', 'soft-aware', 'testimonial']);
 export const contestStatusEnum = pgEnum('contest_status', ['draft', 'active', 'paused', 'completed', 'cancelled']);
 export const postStatusEnum = pgEnum('post_status', ['submitted', 'reviewing', 'approved', 'rejected', 'published', 'claimed']);
 export const postClaimStatusEnum = pgEnum('post_claim_status', ['pending', 'approved', 'rejected']);

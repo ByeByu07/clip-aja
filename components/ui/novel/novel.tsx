@@ -33,9 +33,9 @@ const Novel = ({ content, setContent, placeholder }: { content: JSONContent, set
                             <EditorCommandItem
                                 value={item.title}
                                 onCommand={(val) => item.command(val)}
-                                className={`flex w-full items-center space-x-2 rounded-md px-2 py-1 text-left text-sm hover:bg-accent aria-selected:bg-accent `}
+                                className={`flex w-full items-center space-x-2 rounded-md px-2 py-1 text-left text-sm hover:bg-accent aria-selected:bg-accent bg-white `}
                                 key={item.title}>
-                                <div className='flex h-10 w-10 items-center justify-center rounded-md border border-muted bg-primary dark:bg-white dark:text-white'>
+                                <div className='flex h-10 w-10 items-center justify-center rounded-md border border-muted bg-primary dark:bg-white dark:text-white bg-white'>
                                     {item.icon}
                                 </div>
                                 <div>

@@ -14,10 +14,10 @@ import { cn } from '@/lib/utils';
 import { useMutation } from '@tanstack/react-query';
 import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
 
-export const CreateNewContestModal = ({ onClose }: { onClose: () => void }) => {
+export const CreateNewContestModal = ({ onClose, onContestCreated }: { onClose: () => void, onContestCreated: () => void }) => {
     const [formData, setFormData] = useState({
         title: '',
-        description: '',
+        // description: '',
         type: '',
         link: '',
         thumbnailUrl: '',
@@ -25,7 +25,7 @@ export const CreateNewContestModal = ({ onClose }: { onClose: () => void }) => {
         maxPayout: '',
         minViews: '100',
         submissionDeadline: '',
-        requirements: '',
+        // requirements: '',
         targetPlatforms: ''
     });
 
@@ -57,6 +57,7 @@ export const CreateNewContestModal = ({ onClose }: { onClose: () => void }) => {
             console.log('Contest created successfully:', data);
             // You can add success toast notification here
             onClose();
+            onContestCreated();
         },
         onError: (error) => {
             console.error('Error creating contest:', error);
@@ -98,7 +99,7 @@ export const CreateNewContestModal = ({ onClose }: { onClose: () => void }) => {
 
         if (!formData.title.trim()) newErrors.title = 'Title is required';
         if (!formData.type) newErrors.type = 'Contest type is required';
-        if (!formData.link.trim()) newErrors.link = 'Link is required';
+        // if (!formData.link.trim()) newErrors.link = 'Link is required';
         if (!formData.payPerView || parseFloat(formData.payPerView) <= 0) {
             newErrors.payPerView = 'Pay per view must be greater than 0';
         }
@@ -114,8 +115,8 @@ export const CreateNewContestModal = ({ onClose }: { onClose: () => void }) => {
         if (validateForm()) {
             const submitData = {
                 ...formData,
-                description,
-                requirements
+                description: description ? JSON.stringify(description) : null,
+                requirements: requirements ? JSON.stringify(requirements) : null
             };
             createContestMutation.mutate(submitData);
         }
@@ -161,14 +162,14 @@ export const CreateNewContestModal = ({ onClose }: { onClose: () => void }) => {
                     <div className="space-y-2">
                         <Label htmlFor="type">Jenis Kontes *</Label>
                         <Select value={formData.type} onValueChange={(value) => handleChange('type', value)}>
-                            <SelectTrigger className={cn(errors.type ? 'border-red-500' : '',"w-full")}>
+                            <SelectTrigger className={cn(errors.type ? 'border-red-500' : '', "w-full")}>
                                 <SelectValue placeholder="Pilih jenis kontes" />
                             </SelectTrigger>
                             <SelectContent>
-                                <SelectItem value="video">Video</SelectItem>
-                                <SelectItem value="photo">Photo</SelectItem>
-                                <SelectItem value="article">Article</SelectItem>
-                                <SelectItem value="other">Other</SelectItem>
+                                <SelectItem value="clip">Clip</SelectItem>
+                                <SelectItem value="soft-aware">Soft Awareness</SelectItem>
+                                <SelectItem value="testimonial">Testimonial / Review</SelectItem>
+                                <SelectItem value="ugc">User Generated Content (UGC)</SelectItem>
                             </SelectContent>
                         </Select>
                         {errors.type && <p className="text-red-500 text-sm">{errors.type}</p>}
@@ -188,7 +189,7 @@ export const CreateNewContestModal = ({ onClose }: { onClose: () => void }) => {
                     <div className="space-y-2">
                         <Label htmlFor="targetPlatforms">Platform Target</Label>
                         <Select value={formData.targetPlatforms} onValueChange={(value) => handleChange('targetPlatforms', value)}>
-                            <SelectTrigger className={cn(errors.targetPlatforms ? 'border-red-500' : '',"w-full")}>
+                            <SelectTrigger className={cn(errors.targetPlatforms ? 'border-red-500' : '', "w-full")}>
                                 <SelectValue placeholder="Pilih platform target" />
                             </SelectTrigger>
                             <SelectContent>
@@ -202,7 +203,16 @@ export const CreateNewContestModal = ({ onClose }: { onClose: () => void }) => {
                 </div>
 
                 <div className="space-y-2">
-                    <Label htmlFor="link">Link Tambahan *</Label>
+                    <Label htmlFor="link">Link Tambahan
+                        <Tooltip>
+                            <TooltipTrigger>
+                                <Info className="inline h-4" />
+                            </TooltipTrigger>
+                            <TooltipContent>
+                                <p>Link konten tambahan (Google Drive, Dropbox, dll)</p>
+                            </TooltipContent>
+                        </Tooltip>
+                    </Label>
                     <Input
                         id="link"
                         type="url"
@@ -215,7 +225,7 @@ export const CreateNewContestModal = ({ onClose }: { onClose: () => void }) => {
                 </div>
 
                 <div className="space-y-2">
-                    <Label htmlFor="thumbnailUrl">Thumbnail URL</Label>
+                    <Label htmlFor="thumbnailUrl">Thumbnail</Label>
                     {thumbnailPreview && (
                         <div className="relative w-full h-48 border rounded-md overflow-hidden">
                             <Image
@@ -236,7 +246,7 @@ export const CreateNewContestModal = ({ onClose }: { onClose: () => void }) => {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                        <Label htmlFor="payPerView">Bayar Per View * 
+                        <Label htmlFor="payPerView">Bayar Per View *
                             <Tooltip>
                                 <TooltipTrigger>
                                     <Info className="inline h-4" />
@@ -259,13 +269,13 @@ export const CreateNewContestModal = ({ onClose }: { onClose: () => void }) => {
                     </div>
 
                     <div className="space-y-2">
-                        <Label htmlFor="maxPayout">Pembayaran Maksimal * 
+                        <Label htmlFor="maxPayout">Budget Maksimal *
                             <Tooltip>
                                 <TooltipTrigger>
                                     <Info className="inline h-4" />
                                 </TooltipTrigger>
                                 <TooltipContent>
-                                    <p>Jumlah Maksimal yang bisa didapatkan clipper</p>
+                                    <p>Jumlah uang yang kamu inginkan untuk sayembara ini</p>
                                 </TooltipContent>
                             </Tooltip>
                         </Label>
@@ -283,7 +293,16 @@ export const CreateNewContestModal = ({ onClose }: { onClose: () => void }) => {
                 </div>
 
                 <div className="space-y-2">
-                    <Label htmlFor="minViews">Minimum Views</Label>
+                    <Label htmlFor="minViews">Minimum Views
+                    <Tooltip>
+                                <TooltipTrigger>
+                                    <Info className="inline h-4" />
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                    <p>Minimal views yang diperlukan untuk kontes ini</p>
+                                </TooltipContent>
+                            </Tooltip>
+                    </Label>
                     <Input
                         id="minViews"
                         type="number"

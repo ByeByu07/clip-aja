@@ -11,7 +11,7 @@ export async function GET(req: Request, { params }: { params: { id: string } }):
     const id = _params.id;
     
     const result = await db.select().from(contests).where(eq(contests.id, id));
-    
+
     return NextResponse.json({
         status: "success",
         code: 200,
