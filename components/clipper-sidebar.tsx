@@ -3,9 +3,9 @@
 import * as React from "react"
 import {
   IconDashboard,
-  IconInnerShadowTop,
   IconUsers,
   IconMoneybag,
+  IconUpload,
 } from "@tabler/icons-react"
 import Link from "next/link"
 import { NavMain } from "@/components/nav-main"
@@ -19,38 +19,23 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
+import { authClient } from "@/lib/auth-client"
 
-const data = {
-  user: {
-    name: "Viral Saiki",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
-  navMain: [
-    {
-      title: "Overview",
-      url: "/dashboard/clipper",
-      icon: IconDashboard,
-    },
-    {
-      title: "Posts",
-      url: "/dashboard/clipper/posts",
-      icon: IconDashboard,
-    },
-    {
-      title: "Social Accounts",
-      url: "/dashboard/clipper/social-accounts",
-      icon: IconUsers,
-    },
-    {
-      title: "Payout",
-      url: "/dashboard/clipper/payouts",
-      icon: IconMoneybag,
-    },
-  ],
-}
+type Session = typeof authClient.$Infer.Session;
 
 export function ClipperSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+
+  const [session, setSession] = React.useState<Session | null>(null)
+
+  const loadSession = async () => {
+    const session = await authClient.getSession()
+    setSession(session.data)
+  }
+
+  React.useEffect(() => {
+    loadSession()
+  }, [])
+
   return (
     <Sidebar collapsible="offcanvas" {...props}>
       <SidebarHeader>
@@ -61,7 +46,6 @@ export function ClipperSidebar({ ...props }: React.ComponentProps<typeof Sidebar
               className="data-[slot=sidebar-menu-button]:!p-1.5"
             >
               <Link href="/dashboard/clipper">
-                <IconInnerShadowTop className="!size-5" />
                 <span className="text-base font-semibold">Viral Saiki</span>
               </Link>
             </SidebarMenuButton>
@@ -69,10 +53,31 @@ export function ClipperSidebar({ ...props }: React.ComponentProps<typeof Sidebar
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={data.navMain} />
+        <NavMain items={[
+          {
+            title: "Overview",
+            url: "/dashboard/clipper",
+            icon: IconDashboard,
+          },
+          {
+            title: "Posts",
+            url: "/dashboard/clipper/posts",
+            icon: IconUpload,
+          },
+          {
+            title: "Social Accounts",
+            url: "/dashboard/clipper/social-accounts",
+            icon: IconUsers,
+          },
+          {
+            title: "Payout",
+            url: "/dashboard/clipper/payouts",
+            icon: IconMoneybag,
+          },
+        ]} />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser user={{ email: session?.user.email || "", name: session?.user.name || "", avatar: session?.user.image || "" }} />
       </SidebarFooter>
     </Sidebar>
   )

@@ -2,19 +2,11 @@
 
 import * as React from "react"
 import {
-  IconDashboard,
-  IconHelp,
   IconInnerShadowTop,
-  IconListDetails,
-  IconReport,
-  IconSearch,
-  IconSettings,
-  IconUsers,
+  IconAward
 } from "@tabler/icons-react"
-
-import { NavDocuments } from "@/components/nav-documents"
+import { authClient } from "@/lib/auth-client"
 import { NavMain } from "@/components/nav-main"
-import { NavSecondary } from "@/components/nav-secondary"
 import { NavUser } from "@/components/nav-user"
 import {
   Sidebar,
@@ -25,23 +17,23 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
+import Link from "next/link"
 
-const data = {
-  user: {
-    name: "Viral Saiki",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
-  navMain: [
-    {
-      title: "Contest",
-      url: "#",
-      icon: IconDashboard,
-    },
-  ],
-}
+type Session = typeof authClient.$Infer.Session;
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+
+  const [session, setSession] = React.useState<Session | null>(null)
+
+  const loadSession = async () => {
+    const session = await authClient.getSession()
+    setSession(session.data)
+  }
+
+  React.useEffect(() => {
+    loadSession()
+  }, [])
+
   return (
     <Sidebar collapsible="offcanvas" {...props}>
       <SidebarHeader>
@@ -51,19 +43,22 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               asChild
               className="data-[slot=sidebar-menu-button]:!p-1.5"
             >
-              <a href="#">
-                <IconInnerShadowTop className="!size-5" />
+              <Link href="/">
                 <span className="text-base font-semibold">Viral Saiki</span>
-              </a>
+              </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={data.navMain} />
+        <NavMain items={[{
+          title: "Contest",
+          url: "/dashboard",
+          icon: IconAward,
+        }]} />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser user={{email: session?.user.email || "", name: session?.user.name || "", avatar: session?.user.image || ""}} />
       </SidebarFooter>
     </Sidebar>
   )
