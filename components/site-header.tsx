@@ -30,9 +30,9 @@ export function SiteHeader({ title, link, linkText }: SiteHeaderProps) {
             >
               GitHub
             </a> */}
-            <Link href={link}>
+            {/* <Link href={link}>
               {linkText} <ArrowRight className="size-4" />
-            </Link>
+            </Link> */}
           </Button>
         </div>
       </div>
