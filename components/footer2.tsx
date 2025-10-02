@@ -31,7 +31,7 @@ const Footer2 = ({
     title: "Shadcnblocks.com",
     url: "https://www.shadcnblocks.com",
   },
-  tagline = "Components made easy.",
+  tagline = "Bangun Awarenessmu dengan Clip Aja",
   menuItems = [
     {
       title: "Product",
@@ -72,30 +72,32 @@ const Footer2 = ({
       ],
     },
   ],
-  copyright = "© 2025 ViralSaiki. All rights reserved.",
+  copyright = "© 2025 Clip Aja. All rights reserved.",
   bottomLinks = [
     { text: "Terms and Conditions", url: "#" },
     { text: "Privacy Policy", url: "#" },
   ],
 }: Footer2Props) => {
   return (
-    <section className="py-32 px-10">
+    <section className="pt-10 px-10">
       <div className="container">
         <footer>
-          <div className="grid grid-cols-1 gap-8">
-            <div className="col-span-2 mb-8 flex items-center gap-2 justify-center flex-col">
+          <div className="grid grid-cols-1 gap-8 my-20">
+            <div className="col-span-2 flex items-center gap-2 justify-center flex-col">
               <div className="flex items-center gap-2">
                 <Logo url="https://shadcnblocks.com">
-                  <LogoImage
+                  {/* <LogoImage
                     src={logo.src}
                     alt={logo.alt}
                     title={logo.title}
                     className="h-10"
-                  />
-                  <LogoText className="text-xl">{logo.title}</LogoText>
+                  /> */}
+                  <p className="text-5xl uppercase text-[Rubik] tracking-wider font-bold text-[#fb8500]">Clip Aja</p>
+
+                  {/* <LogoText className="text-xl">{logo.title}</LogoText> */}
                 </Logo>
               </div>
-              <p className="mt-4 font-bold">{tagline}</p>
+              <p className=" font-bold tracking-wider text-muted-foreground">{copyright}</p>
             </div>
             {/* {menuItems.map((section, sectionIdx) => (
               <div key={sectionIdx}>
@@ -113,7 +115,7 @@ const Footer2 = ({
               </div>
             ))} */}
           </div>
-          <div className="text-muted-foreground mt-24 flex flex-col justify-between gap-4 border-t pt-8 text-sm font-medium md:flex-row md:items-center">
+          {/* <div className="text-muted-foreground mt-16 flex flex-col justify-center gap-4 border-t pt-8 text-sm font-medium md:flex-row md:items-center">
             <p>{copyright}</p>
             <ul className="flex gap-4">
               {bottomLinks.map((link, linkIdx) => (
@@ -122,7 +124,7 @@ const Footer2 = ({
                 </li>
               ))}
             </ul>
-          </div>
+          </div> */}
         </footer>
       </div>
     </section>

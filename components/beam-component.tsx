@@ -13,7 +13,7 @@ const Circle = forwardRef<
     <div
       ref={ref}
       className={cn(
-        "z-10 flex size-12 items-center justify-center rounded-full border-2 bg-white p-3 shadow-[0_0_20px_-12px_rgba(0,0,0,0.8)]",
+        "z-10 flex size-12 items-center justify-center rounded-full border-2 border-[#fb8500]/50 bg-white p-3",
         className
       )}
     >
@@ -37,6 +37,16 @@ export function BeamComponent({
   const div5Ref = useRef<HTMLDivElement>(null)
   const div6Ref = useRef<HTMLDivElement>(null)
   const div7Ref = useRef<HTMLDivElement>(null)
+  const div8Ref = useRef<HTMLDivElement>(null)
+  const div9Ref = useRef<HTMLDivElement>(null)
+  const div10Ref = useRef<HTMLDivElement>(null)
+  const div11Ref = useRef<HTMLDivElement>(null)
+  const div12Ref = useRef<HTMLDivElement>(null)
+  const div13Ref = useRef<HTMLDivElement>(null)
+  const div14Ref = useRef<HTMLDivElement>(null)
+  const div16Ref = useRef<HTMLDivElement>(null)
+  const div17Ref = useRef<HTMLDivElement>(null)
+  const div18Ref = useRef<HTMLDivElement>(null)
 
   return (
     <div
@@ -46,37 +56,109 @@ export function BeamComponent({
       )}
       ref={containerRef}
     >
-      <div className="flex size-full max-w-lg flex-row items-stretch justify-between gap-10">
-        <div className="flex flex-col justify-center">
-          <Circle ref={div7Ref}>
+      <div className="flex size-full max-w-4xl flex-row items-stretch justify-between gap-10">
+        <div className="flex flex-col justify-center gap-4">
+          <Circle ref={div16Ref}>
             <Icons.user />
           </Circle>
         </div>
         <div className="flex flex-col justify-center">
-          <Circle ref={div6Ref} className="size-16">
+          <Circle ref={div14Ref} className="size-16">
             <Icons.openai />
           </Circle>
         </div>
         <div className="flex flex-col justify-center gap-2">
           <Circle ref={div1Ref}>
-            <Icons.googleDrive />
+            <Icons.user />
           </Circle>
           <Circle ref={div2Ref}>
-            <Icons.googleDocs />
+            <Icons.userCircle />
           </Circle>
           <Circle ref={div3Ref}>
-            <Icons.whatsapp />
+            <Icons.userCheck />
           </Circle>
           <Circle ref={div4Ref}>
-            <Icons.messenger />
+            <Icons.userPlus />
           </Circle>
           <Circle ref={div5Ref}>
-            <Icons.notion />
+            <Icons.users />
           </Circle>
+        </div>
+        <div className="flex flex-col justify-center gap-4">
+          <div className="flex flex-col gap-2">
+            <Circle ref={div6Ref} className="size-10">
+              <Icons.userCog />
+            </Circle>
+            <Circle ref={div7Ref} className="size-10">
+              <Icons.userSquare />
+            </Circle>
+          </div>
+          <div className="flex flex-col gap-2">
+            <Circle ref={div8Ref} className="size-10">
+              <Icons.userMinus />
+            </Circle>
+            <Circle ref={div9Ref} className="size-10">
+              <Icons.userX />
+            </Circle>
+          </div>
+          <div className="flex flex-col gap-2">
+            <Circle ref={div10Ref} className="size-10">
+              <Icons.userRound />
+            </Circle>
+            <Circle ref={div11Ref} className="size-10">
+              <Icons.userRoundCheck />
+            </Circle>
+          </div>
+          <div className="flex flex-col gap-2">
+            <Circle ref={div12Ref} className="size-10">
+              <Icons.userRoundPlus />
+            </Circle>
+            <Circle ref={div13Ref} className="size-10">
+              <Icons.userRoundCog />
+            </Circle>
+          </div>
+          <div className="flex flex-col gap-2">
+            <Circle ref={div17Ref} className="size-10">
+              <Icons.userRoundPlus />
+            </Circle>
+            <Circle ref={div18Ref} className="size-10">
+              <Icons.userRoundCog />
+            </Circle>
+          </div>
         </div>
       </div>
 
-      {/* AnimatedBeams */}
+      {/* AnimatedBeams - Parent nodes to child nodes */}
+      <AnimatedBeam
+        containerRef={containerRef}
+        fromRef={div1Ref}
+        toRef={div14Ref}
+        duration={3}
+      />
+      <AnimatedBeam
+        containerRef={containerRef}
+        fromRef={div2Ref}
+        toRef={div14Ref}
+        duration={3}
+      />
+      <AnimatedBeam
+        containerRef={containerRef}
+        fromRef={div3Ref}
+        toRef={div14Ref}
+        duration={3}
+      />
+      <AnimatedBeam
+        containerRef={containerRef}
+        fromRef={div4Ref}
+        toRef={div14Ref}
+        duration={3}
+      />
+      <AnimatedBeam
+        containerRef={containerRef}
+        fromRef={div5Ref}
+        toRef={div14Ref}
+        duration={3}
+      />
       <AnimatedBeam
         containerRef={containerRef}
         fromRef={div1Ref}
@@ -85,34 +167,84 @@ export function BeamComponent({
       />
       <AnimatedBeam
         containerRef={containerRef}
-        fromRef={div2Ref}
+        fromRef={div1Ref}
+        toRef={div7Ref}
+        duration={3}
+      />
+      <AnimatedBeam
+        containerRef={containerRef}
+        fromRef={div16Ref}
+        toRef={div14Ref}
+        duration={3}
+      />
+      {/* AnimatedBeams - Child nodes to center */}
+      <AnimatedBeam
+        containerRef={containerRef}
+        fromRef={div1Ref}
         toRef={div6Ref}
+        duration={3}
+      />
+      <AnimatedBeam
+        containerRef={containerRef}
+        fromRef={div1Ref}
+        toRef={div7Ref}
+        duration={3}
+      />
+      <AnimatedBeam
+        containerRef={containerRef}
+        fromRef={div2Ref}
+        toRef={div8Ref}
+        duration={3}
+      />
+      <AnimatedBeam
+        containerRef={containerRef}
+        fromRef={div2Ref}
+        toRef={div9Ref}
         duration={3}
       />
       <AnimatedBeam
         containerRef={containerRef}
         fromRef={div3Ref}
-        toRef={div6Ref}
+        toRef={div10Ref}
+        duration={3}
+      />
+      <AnimatedBeam
+        containerRef={containerRef}
+        fromRef={div3Ref}
+        toRef={div11Ref}
         duration={3}
       />
       <AnimatedBeam
         containerRef={containerRef}
         fromRef={div4Ref}
-        toRef={div6Ref}
+        toRef={div12Ref}
+        duration={3}
+      />
+      <AnimatedBeam
+        containerRef={containerRef}
+        fromRef={div4Ref}
+        toRef={div13Ref}
         duration={3}
       />
       <AnimatedBeam
         containerRef={containerRef}
         fromRef={div5Ref}
-        toRef={div6Ref}
+        toRef={div17Ref}
         duration={3}
       />
+      {/* AnimatedBeams - Center to end nodes */}
       <AnimatedBeam
         containerRef={containerRef}
-        fromRef={div6Ref}
-        toRef={div7Ref}
+        fromRef={div5Ref}
+        toRef={div18Ref}
         duration={3}
       />
+      {/* <AnimatedBeam
+        containerRef={containerRef}
+        fromRef={div14Ref}
+        toRef={div16Ref}
+        duration={3}
+      /> */}
     </div>
   )
 }
@@ -509,6 +641,205 @@ const Icons = {
     >
       <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
       <circle cx="12" cy="7" r="4" />
+    </svg>
+  ),
+  userCircle: () => (
+    <svg
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="#000000"
+      strokeWidth="2"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <circle cx="12" cy="12" r="10" />
+      <circle cx="12" cy="10" r="3" />
+      <path d="M7 20.662V19a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v1.662" />
+    </svg>
+  ),
+  userCheck: () => (
+    <svg
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="#000000"
+      strokeWidth="2"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+      <circle cx="9" cy="7" r="4" />
+      <polyline points="16 11 18 13 22 9" />
+    </svg>
+  ),
+  userPlus: () => (
+    <svg
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="#000000"
+      strokeWidth="2"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+      <circle cx="9" cy="7" r="4" />
+      <line x1="20" x2="20" y1="8" y2="14" />
+      <line x1="23" x2="17" y1="11" y2="11" />
+    </svg>
+  ),
+  users: () => (
+    <svg
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="#000000"
+      strokeWidth="2"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+      <circle cx="9" cy="7" r="4" />
+      <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+      <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+    </svg>
+  ),
+  userCog: () => (
+    <svg
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="#000000"
+      strokeWidth="2"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <circle cx="18" cy="15" r="3" />
+      <circle cx="9" cy="7" r="4" />
+      <path d="M10 15H6a4 4 0 0 0-4 4v2" />
+      <path d="m21.7 16.4-.9-.3" />
+      <path d="m15.2 13.9-.9-.3" />
+      <path d="m16.6 18.7.3-.9" />
+      <path d="m19.1 12.2.3-.9" />
+      <path d="m19.6 18.7-.4-1" />
+      <path d="m16.8 12.3-.4-1" />
+      <path d="m14.3 16.6 1-.4" />
+      <path d="m20.7 13.8 1-.4" />
+    </svg>
+  ),
+  userSquare: () => (
+    <svg
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="#000000"
+      strokeWidth="2"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <rect width="18" height="18" x="3" y="3" rx="2" />
+      <circle cx="12" cy="10" r="3" />
+      <path d="M7 21v-2a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v2" />
+    </svg>
+  ),
+  userMinus: () => (
+    <svg
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="#000000"
+      strokeWidth="2"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+      <circle cx="9" cy="7" r="4" />
+      <line x1="23" x2="17" y1="11" y2="11" />
+    </svg>
+  ),
+  userX: () => (
+    <svg
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="#000000"
+      strokeWidth="2"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+      <circle cx="9" cy="7" r="4" />
+      <line x1="17" x2="22" y1="8" y2="13" />
+      <line x1="22" x2="17" y1="8" y2="13" />
+    </svg>
+  ),
+  userRound: () => (
+    <svg
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="#000000"
+      strokeWidth="2"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <circle cx="12" cy="8" r="5" />
+      <path d="M20 21a8 8 0 0 0-16 0" />
+    </svg>
+  ),
+  userRoundCheck: () => (
+    <svg
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="#000000"
+      strokeWidth="2"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path d="M2 21a8 8 0 0 1 13.292-6" />
+      <circle cx="10" cy="8" r="5" />
+      <path d="m16 19 2 2 4-4" />
+    </svg>
+  ),
+  userRoundPlus: () => (
+    <svg
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="#000000"
+      strokeWidth="2"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path d="M2 21a8 8 0 0 1 13.292-6" />
+      <circle cx="10" cy="8" r="5" />
+      <path d="M19 16v6" />
+      <path d="M22 19h-6" />
+    </svg>
+  ),
+  userRoundCog: () => (
+    <svg
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="#000000"
+      strokeWidth="2"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path d="M2 21a8 8 0 0 1 10.434-7.62" />
+      <circle cx="10" cy="8" r="5" />
+      <circle cx="18" cy="18" r="3" />
+      <path d="m19.5 14.3-.4.9" />
+      <path d="m16.9 20.8-.4.9" />
+      <path d="m21.7 19.5-.9-.4" />
+      <path d="m15.2 16.9-.9-.4" />
+      <path d="m21.7 16.5-.9.4" />
+      <path d="m15.2 19.1-.9.4" />
+      <path d="m19.5 21.7-.4-.9" />
+      <path d="m16.9 15.2-.4-.9" />
     </svg>
   ),
 }

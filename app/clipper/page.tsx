@@ -27,104 +27,66 @@ import { Android } from "@/components/ui/shadcn-io/android";
 
 const reviews = [
   {
-    name: "Budi Santoso",
-    username: "@budionline",
-    body: "Awalnya saya mikir susah buat naikin awareness brand, tapi dengan platform ini semua jadi lebih gampang. View naik, biaya tetap terjangkau.",
-    img: "https://avatar.vercel.sh/budi",
+    name: "Dika Pratama",
+    username: "@dikacreate",
+    body: "Enak banget jadi clipper di sini. Tinggal pilih sayembara, bikin video, views naik → komisi langsung cair. Simple dan jelas.",
+    img: "https://avatar.vercel.sh/dika",
   },
   {
-    name: "Michelle Tan",
-    username: "@michelle_tan",
-    body: "Sebagai pemilik brand fashion, saya butuh exposure cepat. Tim clipper dan soft awareness di sini benar-benar bantu brand saya dikenal lebih luas.",
-    img: "https://avatar.vercel.sh/michelle",
+    name: "Stephanie Ong",
+    username: "@steph.ong",
+    body: "Sebagai content creator, platform ini ngebantu banget. Saya bisa dapet job rutin tanpa harus cari-cari client sendiri.",
+    img: "https://avatar.vercel.sh/steph",
   },
   {
-    name: "Hendra Wijaya",
-    username: "@hendra_w",
-    body: "Yang bikin beda, sistem bayar per 1000 views sangat transparan. Saya bisa ukur ROI iklan dengan jelas tanpa takut boncos.",
-    img: "https://avatar.vercel.sh/hendra",
+    name: "Bayu Kurniawan",
+    username: "@bayuclip",
+    body: "Saya suka karena sistemnya transparan. Dibayar per 1000 views bikin saya termotivasi bikin konten yang lebih kreatif.",
+    img: "https://avatar.vercel.sh/bayu",
   },
   {
-    name: "Cindy Pranata",
-    username: "@cindyy",
-    body: "Saya butuh cara cepat supaya brand kuliner saya viral. Dengan clipper di sini, konten saya langsung tersebar di TikTok & IG. Hasilnya nyata.",
-    img: "https://avatar.vercel.sh/cindy",
+    name: "Angela Lim",
+    username: "@angelalim",
+    body: "Awalnya coba-coba, ternyata gampang banget. Upload video untuk brand F&B, views tembus puluhan ribu dan komisi langsung masuk.",
+    img: "https://avatar.vercel.sh/angela",
   },
   {
-    name: "Andi Gunawan",
-    username: "@andibiz",
-    body: "Solusi ini cocok banget buat UMKM digital. Nggak ribet, timnya udah ngerti cara bikin awareness yang efektif.",
-    img: "https://avatar.vercel.sh/andi",
+    name: "Yusuf Rahman",
+    username: "@yusufrahman",
+    body: "Buat mahasiswa kayak saya, ini pas banget. Bisa dapet tambahan cuan dari bikin konten singkat yang saya suka kerjain.",
+    img: "https://avatar.vercel.sh/yusuf",
   },
   {
-    name: "Felicia Lim",
-    username: "@felicialim",
-    body: "Sangat puas! Brand saya dapat exposure cepat tanpa harus keluar budget besar. Clipper-nya kreatif dan hasilnya organik banget.",
-    img: "https://avatar.vercel.sh/felicia",
-  },
-  // tambahan 10 review baru
-  {
-    name: "Ricky Halim",
-    username: "@rickyhalim",
-    body: "Saya minta konten BTS produksi kopi shop saya, hasilnya natural banget dan bikin orang penasaran datang langsung. Kreatif & engaging!",
-    img: "https://avatar.vercel.sh/ricky",
+    name: "Natalie Chandra",
+    username: "@natalie.c",
+    body: "Suka banget karena bisa bebas pilih project. Kadang BTS, kadang soft-selling, tergantung mood. Komisi selalu aman.",
+    img: "https://avatar.vercel.sh/natalie",
   },
   {
-    name: "Putri Amalia",
-    username: "@putriamalia",
-    body: "Saya punya bisnis skincare. Cuma bikin sayembara, lalu banyak clipper buat konten review jujur. Hasilnya lebih dipercaya audiens.",
-    img: "https://avatar.vercel.sh/putri",
+    name: "Rizky Setiawan",
+    username: "@rizkyset",
+    body: "Daripada konten saya nganggur di HP, mending upload ke sayembara. Lumayan, sekali viral komisi langsung nambah drastis.",
+    img: "https://avatar.vercel.sh/rizky",
   },
   {
-    name: "Kevin Prasetyo",
-    username: "@kevinp",
-    body: "Saya minta video behind-the-scenes launching mobil bekas di dealer saya. Hasilnya keren, bikin trust meningkat dan stok cepat laku.",
-    img: "https://avatar.vercel.sh/kevin",
+    name: "Clara Wijaya",
+    username: "@claraw",
+    body: "Kerja santai tapi hasil nyata. Saya suka karena brand-brand yang masuk juga variatif, jadi nggak bosan bikin konten.",
+    img: "https://avatar.vercel.sh/clara",
   },
   {
-    name: "Siska Gunarti",
-    username: "@sisg",
-    body: "Nggak nyangka, bahkan bisnis catering rumahan bisa ikut. Clipper bikin video simple, views banyak, langsung ada pesanan baru.",
-    img: "https://avatar.vercel.sh/siska",
+    name: "Fajar Hidayat",
+    username: "@fajarcuts",
+    body: "Komisi sesuai effort. Kalau video saya bagus dan banyak yang nonton, cuan juga makin gede. Fair banget sistemnya.",
+    img: "https://avatar.vercel.sh/fajar",
   },
   {
-    name: "Adrian Kusuma",
-    username: "@adrikusuma",
-    body: "Saya butuh video soft-selling buat kursus online. Dengan sistem sayembara, banyak ide fresh masuk. Hasilnya beda dari ads biasa.",
-    img: "https://avatar.vercel.sh/adrian",
-  },
-  {
-    name: "Lina Hartono",
-    username: "@linahartono",
-    body: "Mau bikin awareness butik kecil saya? Tinggal bikin sayembara. Clipper kasih konten reels kece yang bikin followers naik drastis.",
-    img: "https://avatar.vercel.sh/lina",
-  },
-  {
-    name: "Davin Ong",
-    username: "@davinong",
-    body: "Saya coba untuk event musik kecil-kecilan. Clipper rekam konten behind-the-scenes, view ribuan, orang jadi tau acara kami.",
-    img: "https://avatar.vercel.sh/davin",
-  },
-  {
-    name: "Rani Kurnia",
-    username: "@ranik",
-    body: "Saya minta testimoni user untuk aplikasi belajar bahasa. Clipper bantu bikin konten UGC yang authentic, hasilnya lebih meyakinkan.",
-    img: "https://avatar.vercel.sh/rani",
-  },
-  {
-    name: "Thomas Lie",
-    username: "@thomaslie",
-    body: "Yang saya suka, fleksibel banget. Mau request konten edukasi, soft awareness, sampai behind-the-scenes, semua bisa lewat sayembara.",
-    img: "https://avatar.vercel.sh/thomas",
-  },
-  {
-    name: "Melati Susanto",
-    username: "@melatis",
-    body: "Awareness brand florist saya naik pesat setelah clipper bikin video aesthetic di TikTok. Harga terjangkau, hasil memuaskan.",
-    img: "https://avatar.vercel.sh/melati",
+    name: "Maya Susilo",
+    username: "@maya.susilo",
+    body: "Sebagai clipper baru, saya merasa dihargai. Nggak perlu follower besar, yang penting views jalan, komisi masuk.",
+    img: "https://avatar.vercel.sh/maya",
   },
 ]
-
 
 const androidSrc = "https://images.unsplash.com/photo-1511485977113-f34c92461ad9?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80"
 
@@ -186,7 +148,7 @@ export default function Home() {
     router.push("/signin");
   };
 
-  const captionWords = ["Distribusi", "Viralin", "Gemain", "Bangun", "Bangkitin"]
+  const captionWords = ["Cuan", "Joss", "Max", "Gokil", "Super"]
 
   return (
     <>
@@ -275,7 +237,7 @@ export default function Home() {
           }}
           className="text-7xl uppercase text-[Rubik] tracking-wider font-bold"
         >
-          <FlipWords words={captionWords} duration={1000} className="font-bold tracking-widest" /> brandmu
+          <FlipWords words={captionWords} duration={1000} className="font-bold tracking-widest" /> komisi
         </motion.p>
         <motion.div
           initial={{
@@ -313,75 +275,13 @@ export default function Home() {
       </div>
 
       <section className=" flex flex-col justify-center items-center my-16 gap-5 relative overflow-hidden">
-        <h2 className=" text-5xl uppercase text-[Bebas_Nue] font-medium z-99">Distribusi <span className="text-[#fb8500]">Mudah</span></h2>
-        <h3 className="text-2xl text-center text-[Bebas_Nue]">lebih dari 1000+ clipper mendistribusikan brandmu</h3>
+        <h2 className=" text-5xl uppercase text-[Bebas_Nue] font-medium z-99">Bantu <span className="text-[#fb8500]">Distribusi</span></h2>
+        <h3 className="text-2xl text-center text-[Bebas_Nue]">gabung lebih dari 1000+ clipper mendistribusikan brand</h3>
         {/* <BeamComponent className="w-full h-fit" /> */}
-        <Marquee repeat={5} reverse className="[--duration:10s]">
+        <Marquee repeat={5} reverse className="[--duration:20s]">
           <ClipperMockCard />
         </Marquee>
 
-      </section>
-
-      <section className="flex flex-col justify-center items-center gap-10">
-        <h2 className="text-5xl uppercase text-[Bebas_Nue] font-medium">Awareness <span className="text-[#fb8500]">Meningkat</span></h2>
-        <div className="flex gap-10">
-          <motion.div
-            initial={{
-              opacity: 0,
-              y: 20,
-            }}
-            animate={{
-              opacity: 1,
-              y: [20, -5, 0],
-            }}
-            transition={{
-              duration: 1,
-              ease: [0.4, 0.0, 0.2, 1],
-            }}
-            className="flex flex-col items-center gap-5"
-          >
-            <Image src="/images/web/dummy.png" className="w-80 rounded-lg" alt="hero" width={1000} height={1000} />
-            {/* <NumberTicker className="text-3xl" value={1000000} delay={2} /> */}
-          </motion.div>
-          <motion.div
-            initial={{
-              opacity: 0,
-              y: 20,
-            }}
-            animate={{
-              opacity: 1,
-              y: [20, -5, 0],
-            }}
-            transition={{
-              duration: 1,
-              ease: [0.4, 0.0, 0.2, 1],
-            }}
-            className="flex flex-col items-center gap-5"
-          >
-            <Image src="/images/web/dummy.png" className="w-80 rounded-lg" alt="hero" width={1000} height={1000} />
-            {/* <NumberTicker className="text-3xl" value={4426900} delay={2} /> */}
-          </motion.div>
-          <motion.div
-            initial={{
-              opacity: 0,
-              y: 20,
-            }}
-            animate={{
-              opacity: 1,
-              y: [20, -5, 0],
-            }}
-            viewport={{ once: true, amount: 0.5 }}
-            transition={{
-              // repeat: Infinity,
-              duration: 1,
-              ease: [0.4, 0.0, 0.2, 1],
-            }}
-            className="flex flex-col items-center gap-5"
-          >
-            <Image src="/images/web/dummy.png" className="w-80 rounded-lg" alt="hero" width={1000} height={1000} />
-            {/* <NumberTicker className="text-3xl" value={10000000} delay={2} /> */}
-          </motion.div>
-        </div>
       </section>
 
       <section className="relative overflow-hidden flex flex-col justify-center items-center gap-10 my-20">
@@ -402,8 +302,12 @@ export default function Home() {
       </section>
 
       <section className="flex flex-col justify-center items-center my-20">
-        <CallToAction1 title="Buka Awarenessmu" description="Gabung 20+ Pemilik Brand untuk membangun brandmu" buttonLabel="Mulai Sekarang" buttonLink="/signin" />
+        <CallToAction1 title="Dapatkan Komisi" description="Gabung 1316+ clipper untuk mendapatkan komisi" buttonLabel="Mulai Sekarang" buttonLink="/signin" />
       </section>
+
+      
+
+
 
       <Footer2 />
     </>
