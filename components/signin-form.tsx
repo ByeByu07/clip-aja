@@ -31,7 +31,7 @@ export function SigninForm({
       onRequest: () => {
         
       },
-      onSuccess: (data) => {
+      onSuccess: async (data) => {
         toast("Signin successful", {
           duration: 2000,
           position: "top-center"
@@ -40,8 +40,19 @@ export function SigninForm({
         setEmail("")
         setPassword("")
 
-        setTimeout(() => {
-          router.push("/dashboard")
+        // Check if user has a role, if not redirect to onboarding
+        setTimeout(async () => {
+          const session = await authClient.getSession()
+
+          if (!session.data?.user?.role) {
+            router.push("/onboarding")
+          } else if (session.data.user.role === "advertiser") {
+            router.push("/dashboard")
+          } else if (session.data.user.role === "clipper") {
+            router.push("/dashboard/clipper")
+          } else {
+            router.push("/dashboard")
+          }
         }, 2000)
       },
       onError: (error) => {

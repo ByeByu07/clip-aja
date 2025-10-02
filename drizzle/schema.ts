@@ -32,6 +32,14 @@ export const user = pgTable("user", {
     // Common fields
     avatarUrl: text('avatarUrl'),
     isActive: boolean('isActive').default(true),
+    referralSource: text('referralSource'), // Where user heard about Clip Aja
+
+    // Admin plugin fields
+    role: text('role'),
+    banned: boolean('banned').default(false),
+    banReason: text('banReason'),
+    banExpires: timestamp('banExpires', { withTimezone: true }),
+
     lastLoginAt: timestamp('lastLoginAt', { withTimezone: true }),
     createdAt: timestamp('createdAt', { withTimezone: true }).defaultNow().notNull(),
     updatedAt: timestamp('updatedAt', { withTimezone: true }).defaultNow().notNull()
@@ -45,7 +53,10 @@ export const session = pgTable("session", {
     updatedAt: timestamp('updatedAt', { withTimezone: true }).notNull(),
     ipAddress: text('ipAddress'),
     userAgent: text('userAgent'),
-    userId: text('userId').notNull().references(() => user.id, { onDelete: 'cascade' })
+    userId: text('userId').notNull().references(() => user.id, { onDelete: 'cascade' }),
+
+    // Admin plugin field for impersonation
+    impersonatedBy: text('impersonatedBy')
 });
 
 export const account = pgTable("account", {

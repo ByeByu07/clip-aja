@@ -140,8 +140,6 @@
     @apply bg-background text-foreground;
   }
 }
-<<<<<<< Updated upstream
-=======
 
 /* --- Novel --- */
 
@@ -449,4 +447,3 @@ mark[style] > strong {
 *::-webkit-scrollbar-thumb:active {
   filter: brightness(0.9);
 }
->>>>>>> Stashed changes

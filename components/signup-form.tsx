@@ -37,14 +37,14 @@ export function SignupForm({
       email: email,
       password: password,
       name: name,
-      callbackURL: "/dashboard",
+      callbackURL: "/onboarding",
     }, {
       onRequest: () => {
         
       },
       onSuccess: () => {
-        toast("Signup successful", {
-          duration: 1000,
+        toast("Signup successful! Please sign in to continue", {
+          duration: 2000,
           position: "top-center"
         })
 
@@ -55,7 +55,7 @@ export function SignupForm({
 
         setTimeout(() => {
           router.push("/signin")
-        }, 1000)
+        }, 2000)
       },
       onError: (error) => {
         toast(error.error.message, {

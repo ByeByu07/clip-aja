@@ -8,8 +8,6 @@ const nextConfig: NextConfig = {
       {
         protocol: "https",
         hostname: "p16-sign-sg.tiktokcdn.com",
-<<<<<<< Updated upstream
-=======
       },
       {
         protocol: "https",
@@ -18,7 +16,6 @@ const nextConfig: NextConfig = {
       {
         protocol: "https",
         hostname: "images.unsplash.com",
->>>>>>> Stashed changes
       }
     ]
   }
