@@ -19,11 +19,6 @@ import { cn } from '@/lib/utils';
 import type { ComponentProps } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { authClient } from '@/lib/auth-client';
-<<<<<<< Updated upstream
-
-type Session = typeof authClient.$Infer.Session;
-=======
->>>>>>> Stashed changes
 
 // Simple logo component for the navbar
 const Logo = (props: React.SVGAttributes<SVGElement>) => {
@@ -131,11 +126,7 @@ export const Navbar03 = React.forwardRef<HTMLElement, Navbar03Props>(
     const router = useRouter();
     const url = usePathname();
 
-<<<<<<< Updated upstream
-    const session: Session | null = authClient.getSession();
-=======
     const session = authClient.useSession()
->>>>>>> Stashed changes
 
     const handleSignInClick = () => {
       console.log("Sign In clicked");
@@ -301,21 +292,6 @@ export const Navbar03 = React.forwardRef<HTMLElement, Navbar03Props>(
           </div>
 
           {/* Right side */}
-<<<<<<< Updated upstream
-          {session !== null ? (
-            <Button
-              size="sm"
-              className="text-sm font-medium px-4 h-9 rounded-md shadow-sm"
-              onClick={(e) => {
-                e.preventDefault();
-                router.push('/dashboard');
-              }}
-            >
-              Dashboard
-            </Button>
-          ) : (
-            <div className="flex items-center gap-3">
-=======
           {session?.data?.user ? (
             <div className="flex items-center gap-3 ml-auto">
               <Button
@@ -331,7 +307,6 @@ export const Navbar03 = React.forwardRef<HTMLElement, Navbar03Props>(
             </div>
           ) : (
             <div className="flex items-center gap-3 ml-auto">
->>>>>>> Stashed changes
               <Button
                 variant="ghost"
                 size="sm"
@@ -356,16 +331,9 @@ export const Navbar03 = React.forwardRef<HTMLElement, Navbar03Props>(
                 {ctaText}
               </Button>
             </div>
-<<<<<<< Updated upstream
-          )
-          }
-        </div>
-      </header>
-=======
           )}
         </Dock>
       </div>
->>>>>>> Stashed changes
     );
   }
 );
