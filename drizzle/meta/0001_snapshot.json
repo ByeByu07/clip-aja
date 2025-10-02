@@ -1341,6 +1341,12 @@
           "notNull": false,
           "default": true
         },
+        "referralSource": {
+          "name": "referralSource",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
         "lastLoginAt": {
           "name": "lastLoginAt",
           "type": "timestamp with time zone",

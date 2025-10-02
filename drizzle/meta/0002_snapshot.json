@@ -1054,6 +1054,12 @@
           "type": "text",
           "primaryKey": false,
           "notNull": true
+        },
+        "impersonatedBy": {
+          "name": "impersonatedBy",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
         }
       },
       "indexes": {},
@@ -1340,6 +1346,37 @@
           "primaryKey": false,
           "notNull": false,
           "default": true
+        },
+        "referralSource": {
+          "name": "referralSource",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "role": {
+          "name": "role",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "banned": {
+          "name": "banned",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "banReason": {
+          "name": "banReason",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "banExpires": {
+          "name": "banExpires",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
         },
         "lastLoginAt": {
           "name": "lastLoginAt",

@@ -14,9 +14,16 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
+import { Dock, DockIcon } from '@/components/ui/dock';
 import { cn } from '@/lib/utils';
 import type { ComponentProps } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
+import { authClient } from '@/lib/auth-client';
+<<<<<<< Updated upstream
+
+type Session = typeof authClient.$Infer.Session;
+=======
+>>>>>>> Stashed changes
 
 // Simple logo component for the navbar
 const Logo = (props: React.SVGAttributes<SVGElement>) => {
@@ -95,8 +102,9 @@ export interface Navbar03Props extends React.HTMLAttributes<HTMLElement> {
 
 // Default navigation links
 const defaultNavigationLinks: Navbar03NavItem[] = [
-  { href: '/', label: 'Home', active: true },
-  { href: '/contests', label: 'Contests' },
+  { href: '/', label: 'Beranda', active: true },
+  { href: '/contests', label: 'Sayembara' },
+  { href: '/clipper', label: 'Clipper' },
 ];
 
 export const Navbar03 = React.forwardRef<HTMLElement, Navbar03Props>(
@@ -117,9 +125,17 @@ export const Navbar03 = React.forwardRef<HTMLElement, Navbar03Props>(
     ref
   ) => {
     const [isMobile, setIsMobile] = useState(false);
+    const [isVisible, setIsVisible] = useState(true);
+    const [lastScrollY, setLastScrollY] = useState(0);
     const containerRef = useRef<HTMLElement>(null);
     const router = useRouter();
     const url = usePathname();
+
+<<<<<<< Updated upstream
+    const session: Session | null = authClient.getSession();
+=======
+    const session = authClient.useSession()
+>>>>>>> Stashed changes
 
     const handleSignInClick = () => {
       console.log("Sign In clicked");
@@ -130,6 +146,30 @@ export const Navbar03 = React.forwardRef<HTMLElement, Navbar03Props>(
       console.log("Get Started clicked");
       router.push("/signin");
     };
+
+    // Scroll handler
+    useEffect(() => {
+      const handleScroll = () => {
+        const currentScrollY = window.scrollY;
+
+        // Show navbar when scrolling up or at the top
+        if (currentScrollY < lastScrollY || currentScrollY < 10) {
+          setIsVisible(true);
+        }
+        // Hide navbar when scrolling down (and not at the top)
+        else if (currentScrollY > lastScrollY && currentScrollY > 10) {
+          setIsVisible(false);
+        }
+
+        setLastScrollY(currentScrollY);
+      };
+
+      window.addEventListener('scroll', handleScroll, { passive: true });
+
+      return () => {
+        window.removeEventListener('scroll', handleScroll);
+      };
+    }, [lastScrollY]);
 
     useEffect(() => {
       const checkWidth = () => {
@@ -164,18 +204,25 @@ export const Navbar03 = React.forwardRef<HTMLElement, Navbar03Props>(
         ref.current = node;
       }
     }, [ref]);
+
     return (
-      <header
-        ref={combinedRef}
+      <div
         className={cn(
-          'sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-4 md:px-6 [&_*]:no-underline',
-          className
+          "sticky top-4 z-50 w-full px-4 md:px-6 transition-transform duration-300 ease-in-out",
+          isVisible ? "translate-y-0" : "-translate-y-[calc(100%+1rem)]"
         )}
-        {...props}
       >
-        <div className="container mx-auto flex h-16 max-w-screen-2xl items-center justify-between gap-4">
+        <Dock
+          ref={combinedRef}
+          className={cn(
+            'bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 [&_*]:no-underline rounded-none h-16 w-full max-w-screen-2xl',
+            className
+          )}
+          disableMagnification={true}
+          {...props}
+        >
           {/* Left side */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-1">
             {/* Mobile menu trigger */}
             {isMobile && (
               <Popover>
@@ -219,9 +266,10 @@ export const Navbar03 = React.forwardRef<HTMLElement, Navbar03Props>(
                 className="flex items-center space-x-2 text-primary hover:text-primary/90 transition-colors cursor-pointer"
               >
                 <div className="text-2xl">
-                  {logo}
+                  <p className="text-sm uppercase text-[Rubik] tracking-wider font-bold text-[#fb8500]">Clip Aja</p>
+                  {/* {logo} */}
                 </div>
-                <span className="hidden font-bold text-xl sm:inline-block">shadcn.io</span>
+                {/* <span className="hidden font-bold text-xl sm:inline-block">shadcn.io</span> */}
               </button>
               {/* Navigation menu */}
               {!isMobile && (
@@ -251,34 +299,73 @@ export const Navbar03 = React.forwardRef<HTMLElement, Navbar03Props>(
               )}
             </div>
           </div>
+
           {/* Right side */}
-          <div className="flex items-center gap-3">
-            <Button
-              variant="ghost"
-              size="sm"
-              className="text-sm font-medium hover:bg-accent hover:text-accent-foreground"
-              onClick={(e) => {
-                e.preventDefault();
-                if (onSignInClick) onSignInClick();
-                handleSignInClick();
-              }}
-            >
-              {signInText}
-            </Button>
+<<<<<<< Updated upstream
+          {session !== null ? (
             <Button
               size="sm"
               className="text-sm font-medium px-4 h-9 rounded-md shadow-sm"
               onClick={(e) => {
                 e.preventDefault();
-                if (onCtaClick) onCtaClick();
-                handleCtaClick();
+                router.push('/dashboard');
               }}
             >
-              {ctaText}
+              Dashboard
             </Button>
-          </div>
+          ) : (
+            <div className="flex items-center gap-3">
+=======
+          {session?.data?.user ? (
+            <div className="flex items-center gap-3 ml-auto">
+              <Button
+                size="sm"
+                className="text-sm font-medium px-4 h-9 rounded-md shadow-sm"
+                onClick={(e) => {
+                  e.preventDefault();
+                  router.push("/dashboard");
+                }}
+              >
+                Dashboard
+              </Button>
+            </div>
+          ) : (
+            <div className="flex items-center gap-3 ml-auto">
+>>>>>>> Stashed changes
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-sm font-medium hover:bg-accent hover:text-accent-foreground"
+                onClick={(e) => {
+                  e.preventDefault();
+                  if (onSignInClick) onSignInClick();
+                  handleSignInClick();
+                }}
+              >
+                {signInText}
+              </Button>
+              <Button
+                size="sm"
+                className="text-sm font-medium px-4 h-9 rounded-md shadow-sm"
+                onClick={(e) => {
+                  e.preventDefault();
+                  if (onCtaClick) onCtaClick();
+                  handleCtaClick();
+                }}
+              >
+                {ctaText}
+              </Button>
+            </div>
+<<<<<<< Updated upstream
+          )
+          }
         </div>
       </header>
+=======
+          )}
+        </Dock>
+      </div>
+>>>>>>> Stashed changes
     );
   }
 );

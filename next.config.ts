@@ -12,6 +12,10 @@ const nextConfig: NextConfig = {
       {
         protocol: "https",
         hostname: "r2.rivalsaiki.hackathon.bayu-ai.dev",
+      },
+      {
+        protocol: "https",
+        hostname: "images.unsplash.com",
       }
     ]
   }

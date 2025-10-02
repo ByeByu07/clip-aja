@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Roboto:ital,wght@0,100..900;1,100..900&family=Rubik:ital,wght@0,300..900;1,300..900&display=swap');
+
 @import "tailwindcss";
 @import "tw-animate-css";
 @tailwind base;
@@ -45,6 +47,24 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+  --animate-marquee: marquee var(--duration) infinite linear;
+  --animate-marquee-vertical: marquee-vertical var(--duration) linear infinite;
+  @keyframes marquee {
+  from {
+    transform: translateX(0);
+    }
+  to {
+    transform: translateX(calc(-100% - var(--gap)));
+    }
+  }
+  @keyframes marquee-vertical {
+  from {
+    transform: translateY(0);
+    }
+  to {
+    transform: translateY(calc(-100% - var(--gap)));
+    }
+  }
 }
 
 :root {
@@ -370,3 +390,64 @@ mark[style] > strong {
 
 /* --- Novel --- */
 
+
+/* --- magic ui --- */
+
+@theme inline {
+  --animate-marquee: marquee var(--duration) infinite linear;
+  --animate-marquee-vertical: marquee-vertical var(--duration) linear infinite;
+
+  @keyframes marquee {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(calc(-100% - var(--gap)));
+    }
+  }
+  @keyframes marquee-vertical {
+    from {
+      transform: translateY(0);
+    }
+    to {
+      transform: translateY(calc(-100% - var(--gap)));
+    }
+  }
+}
+
+/* --- magic ui --- */
+
+
+
+/* --- scroll bar --- */
+/* Universal scrollbar styling */
+* {
+  /* Firefox */
+  scrollbar-width: thin;               /* ukuran tipis */
+  scrollbar-color: #fb8500 #f4f4f5;    /* thumb, track */
+}
+
+/* Chrome, Edge, Safari */
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+*::-webkit-scrollbar-track {
+  background: #f4f4f5;
+  border-radius: 999px;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: #fb8500;
+  border-radius: 999px;
+  border: 2px solid #f4f4f5; /* efek “inset” */
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  filter: brightness(0.95);
+}
+
+*::-webkit-scrollbar-thumb:active {
+  filter: brightness(0.9);
+}
