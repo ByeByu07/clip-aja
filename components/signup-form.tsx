@@ -37,14 +37,14 @@ export function SignupForm({
       email: email,
       password: password,
       name: name,
-      callbackURL: "/dashboard",
+      callbackURL: "/onboarding",
     }, {
       onRequest: () => {
         
       },
       onSuccess: () => {
-        toast("Signup successful", {
-          duration: 1000,
+        toast("Signup successful! Please sign in to continue", {
+          duration: 2000,
           position: "top-center"
         })
 
@@ -55,7 +55,7 @@ export function SignupForm({
 
         setTimeout(() => {
           router.push("/signin")
-        }, 1000)
+        }, 2000)
       },
       onError: (error) => {
         toast(error.error.message, {
@@ -75,7 +75,7 @@ export function SignupForm({
               <div className="flex flex-col items-center text-center">
                 <h1 className="text-2xl font-bold">Sign up</h1>
                 <p className="text-muted-foreground text-balance">
-                  Sign up to your Acme Inc account
+                  Sign up to your Clip Aja account
                 </p>
               </div>
               <div className="grid gap-3">

@@ -1,31 +1,69 @@
-import { pgTable, text, boolean, timestamp, uuid } from "drizzle-orm/pg-core";
+import { pgTable, text, boolean, timestamp, integer, decimal, pgEnum } from "drizzle-orm/pg-core";
 
+// Enums
+export const contestTypeEnum = pgEnum('contest_type', ['clip', 'ugc', 'soft-aware', 'testimonial']);
+export const contestStatusEnum = pgEnum('contest_status', ['draft', 'active', 'paused', 'completed', 'cancelled']);
+export const postStatusEnum = pgEnum('post_status', ['submitted', 'reviewing', 'approved', 'rejected', 'published', 'claimed']);
+export const postClaimStatusEnum = pgEnum('post_claim_status', ['pending', 'approved', 'rejected']);
+
+// User table - merged with contest platform schema
 export const user = pgTable("user", {
-    id: uuid('id').primaryKey().defaultRandom(),
-    name: text('name').notNull(),
+    id: text('id').primaryKey().$defaultFn(() => crypto.randomUUID()),
+    
+    // Auth fields
+    name: text('name'),
+    username: text('username'),
+    displayUsername: text('displayUsername'),
     email: text('email').notNull().unique(),
     emailVerified: boolean('emailVerified').default(false).notNull(),
     image: text('image'),
+    
+    // Owner-specific fields
+    totalSpent: decimal('totalSpent', { precision: 15, scale: 0 }).default('0'),
+    totalContestsCreated: integer('totalContestsCreated').default(0),
+    
+    // Clipper-specific fields
+    totalPosts: integer('totalPosts').default(0),
+    totalEarnings: decimal('totalEarnings', { precision: 15, scale: 0 }).default('0'),
+    clipperExp: integer('clipperExp').default(0),
+    clipperLevel: integer('clipperLevel').default(1),
+    clipperBio: text('clipperBio'),
+    
+    // Common fields
+    avatarUrl: text('avatarUrl'),
+    isActive: boolean('isActive').default(true),
+    referralSource: text('referralSource'), // Where user heard about Clip Aja
+
+    // Admin plugin fields
+    role: text('role'),
+    banned: boolean('banned').default(false),
+    banReason: text('banReason'),
+    banExpires: timestamp('banExpires', { withTimezone: true }),
+
+    lastLoginAt: timestamp('lastLoginAt', { withTimezone: true }),
     createdAt: timestamp('createdAt', { withTimezone: true }).defaultNow().notNull(),
     updatedAt: timestamp('updatedAt', { withTimezone: true }).defaultNow().notNull()
 });
 
 export const session = pgTable("session", {
-    id: uuid('id').primaryKey().defaultRandom(),
+    id: text('id').primaryKey().$defaultFn(() => crypto.randomUUID()),
     expiresAt: timestamp('expiresAt', { withTimezone: true }).notNull(),
     token: text('token').notNull().unique(),
     createdAt: timestamp('createdAt', { withTimezone: true }).notNull(),
     updatedAt: timestamp('updatedAt', { withTimezone: true }).notNull(),
     ipAddress: text('ipAddress'),
     userAgent: text('userAgent'),
-    userId: uuid('userId').notNull().references(() => user.id, { onDelete: 'cascade' })
+    userId: text('userId').notNull().references(() => user.id, { onDelete: 'cascade' }),
+
+    // Admin plugin field for impersonation
+    impersonatedBy: text('impersonatedBy')
 });
 
 export const account = pgTable("account", {
-    id: uuid('id').primaryKey().defaultRandom(),
+    id: text('id').primaryKey().$defaultFn(() => crypto.randomUUID()),
     accountId: text('accountId').notNull(),
     providerId: text('providerId').notNull(),
-    userId: uuid('userId').notNull().references(() => user.id, { onDelete: 'cascade' }),
+    userId: text('userId').notNull().references(() => user.id, { onDelete: 'cascade' }),
     accessToken: text('accessToken'),
     refreshToken: text('refreshToken'),
     idToken: text('idToken'),
@@ -38,10 +76,176 @@ export const account = pgTable("account", {
 });
 
 export const verification = pgTable("verification", {
-    id: uuid('id').primaryKey().defaultRandom(),
+    id: text('id').primaryKey().$defaultFn(() => crypto.randomUUID()),
     identifier: text('identifier').notNull(),
     value: text('value').notNull(),
     expiresAt: timestamp('expiresAt', { withTimezone: true }).notNull(),
     createdAt: timestamp('createdAt', { withTimezone: true }).defaultNow(),
     updatedAt: timestamp('updatedAt', { withTimezone: true }).defaultNow()
+});
+
+// Profile pages for contest owners
+export const pages = pgTable("pages", {
+    id: text('id').primaryKey().$defaultFn(() => crypto.randomUUID()),
+    userId: text('userId').notNull().references(() => user.id),
+    alias: text('alias').notNull().unique(),
+    slug: text('slug').notNull().unique(),
+    displayName: text('displayName'),
+    bio: text('bio'),
+    coverImageUrl: text('coverImageUrl'),
+    websiteUrl: text('websiteUrl'),
+    socialLinks: text('socialLinks'),
+    totalViews: integer('totalViews').default(0),
+    averageRating: decimal('averageRating', { precision: 3, scale: 2 }),
+    isPublic: boolean('isPublic').default(true),
+    createdAt: timestamp('createdAt', { withTimezone: true }).defaultNow(),
+    updatedAt: timestamp('updatedAt', { withTimezone: true }).defaultNow()
+});
+
+// Contests
+export const contests = pgTable("contests", {
+    id: text('id').primaryKey().$defaultFn(() => crypto.randomUUID()),
+    userId: text('userId').notNull().references(() => user.id),
+    title: text('title').notNull(),
+    description: text('description'),
+    type: contestTypeEnum('type').notNull(),
+    status: contestStatusEnum('status').default('draft'),
+    link: text('link').notNull(),
+    thumbnailUrl: text('thumbnailUrl'),
+    // Rupiah: up to 999,999,999 (999 juta) - no decimals needed
+    payPerView: decimal('payPerView', { precision: 12, scale: 0 }).notNull(),
+    // Rupiah: up to 999,999,999,999 (999 miliar) - no decimals needed
+    maxPayout: decimal('maxPayout', { precision: 15, scale: 0 }).notNull(),
+    currentPayout: decimal('currentPayout', { precision: 15, scale: 0 }).default('0'),
+    minViews: integer('minViews').default(100),
+    submissionDeadline: timestamp('submissionDeadline', { withTimezone: true }),
+    requirements: text('requirements'),
+    targetPlatforms: text('targetPlatforms'),
+    createdAt: timestamp('createdAt', { withTimezone: true }).defaultNow(),
+    updatedAt: timestamp('updatedAt', { withTimezone: true }).defaultNow()
+});
+
+// Transaction for contest funding
+export const transactionContests = pgTable("transactionContests", {
+    id: text('id').primaryKey().$defaultFn(() => crypto.randomUUID()),
+    contestId: text('contestId').notNull().references(() => contests.id),
+    userId: text('userId').notNull().references(() => user.id),
+    grossAmount: decimal('grossAmount', { precision: 15, scale: 0 }).notNull(),
+    netAmount: decimal('netAmount', { precision: 15, scale: 0 }).notNull(),
+    platformFee: decimal('platformFee', { precision: 15, scale: 0 }).default('0'),
+    paymentMethod: text('paymentMethod'),
+    status: text('status').notNull(),
+    midtransSnapToken: text('midtransSnapToken'),
+    midtransTransactionId: text('midtransTransactionId'),
+    midtransOrderId: text('midtransOrderId').unique(),
+    midtransPaymentType: text('midtransPaymentType'),
+    midtransResponseJson: text('midtransResponseJson'),
+    transactionRef: text('transactionRef'),
+    createdAt: timestamp('createdAt', { withTimezone: true }).defaultNow(),
+    updatedAt: timestamp('updatedAt', { withTimezone: true }).defaultNow()
+});
+
+// Posts submitted by clippers
+export const posts = pgTable("posts", {
+    id: text('id').primaryKey().$defaultFn(() => crypto.randomUUID()),
+    contestId: text('contestId').notNull().references(() => contests.id),
+    userId: text('userId').notNull().references(() => user.id),
+    accountId: text('accountId').references(() => account.id),
+    url: text('url').notNull().unique(),
+    status: postStatusEnum('status').default('submitted'),
+    claimStatus: postClaimStatusEnum('claimStatus').default('pending'),
+    views: integer('views').default(0),
+    lastViewCheck: timestamp('lastViewCheck', { withTimezone: true }),
+    calculatedAmount: decimal('calculatedAmount', { precision: 15, scale: 0 }).default('0'),
+    paidAmount: decimal('paidAmount', { precision: 15, scale: 0 }).default('0'),
+    submittedAt: timestamp('submittedAt', { withTimezone: true }).defaultNow(),
+    approvedAt: timestamp('approvedAt', { withTimezone: true }),
+    publishedAt: timestamp('publishedAt', { withTimezone: true }),
+    claimedAt: timestamp('claimedAt', { withTimezone: true }),
+    rejectionReason: text('rejectionReason'),
+    createdAt: timestamp('createdAt', { withTimezone: true }).defaultNow(),
+    updatedAt: timestamp('updatedAt', { withTimezone: true }).defaultNow()
+});
+
+// Post view history
+export const postViewHistory = pgTable("postViewHistory", {
+    id: text('id').primaryKey().$defaultFn(() => crypto.randomUUID()),
+    postId: text('postId').notNull().references(() => posts.id),
+    views: integer('views').notNull(),
+    viewsChange: integer('viewsChange').default(0),
+    checkedAt: timestamp('checkedAt', { withTimezone: true }).defaultNow()
+});
+
+// User payment methods
+export const userPaymentMethods = pgTable("userPaymentMethods", {
+    id: text('id').primaryKey().$defaultFn(() => crypto.randomUUID()),
+    userId: text('userId').notNull().references(() => user.id),
+    type: text('type').notNull(),
+    bankName: text('bankName'),
+    accountNumber: text('accountNumber'),
+    accountHolderName: text('accountHolderName'),
+    walletProvider: text('walletProvider'),
+    walletPhoneNumber: text('walletPhoneNumber'),
+    cardToken: text('cardToken'),
+    cardMasked: text('cardMasked'),
+    cardType: text('cardType'),
+    isPrimary: boolean('isPrimary').default(false),
+    isVerified: boolean('isVerified').default(false),
+    isActive: boolean('isActive').default(true),
+    createdAt: timestamp('createdAt', { withTimezone: true }).defaultNow(),
+    updatedAt: timestamp('updatedAt', { withTimezone: true }).defaultNow()
+});
+
+// Payouts to clippers
+export const payouts = pgTable("payouts", {
+    id: text('id').primaryKey().$defaultFn(() => crypto.randomUUID()),
+    userId: text('userId').notNull().references(() => user.id),
+    postId: text('postId').references(() => posts.id),
+    paymentMethodId: text('paymentMethodId').references(() => userPaymentMethods.id),
+    amount: decimal('amount', { precision: 15, scale: 0 }).notNull(),
+    platformFee: decimal('platformFee', { precision: 15, scale: 0 }).default('0'),
+    netAmount: decimal('netAmount', { precision: 15, scale: 0 }).notNull(),
+    status: text('status').notNull(),
+    midtransTransactionId: text('midtransTransactionId'),
+    midtransOrderId: text('midtransOrderId').unique(),
+    midtransStatus: text('midtransStatus'),
+    midtransPaymentType: text('midtransPaymentType'),
+    midtransResponseJson: text('midtransResponseJson'),
+    failureReason: text('failureReason'),
+    requestedAt: timestamp('requestedAt', { withTimezone: true }).defaultNow(),
+    processedAt: timestamp('processedAt', { withTimezone: true }),
+    completedAt: timestamp('completedAt', { withTimezone: true })
+});
+
+// Contest reviews
+export const contestReviews = pgTable("contestReviews", {
+    id: text('id').primaryKey().$defaultFn(() => crypto.randomUUID()),
+    contestId: text('contestId').notNull().references(() => contests.id),
+    userId: text('userId').notNull().references(() => user.id),
+    rating: integer('rating').notNull(),
+    comment: text('comment'),
+    isPublic: boolean('isPublic').default(true),
+    createdAt: timestamp('createdAt', { withTimezone: true }).defaultNow()
+});
+
+// Page views analytics
+export const pageViews = pgTable("pageViews", {
+    id: text('id').primaryKey().$defaultFn(() => crypto.randomUUID()),
+    pageId: text('pageId').notNull().references(() => pages.id),
+    visitorId: text('visitorId'),
+    referrer: text('referrer'),
+    viewedAt: timestamp('viewedAt', { withTimezone: true }).defaultNow()
+});
+
+// Notifications
+export const notifications = pgTable("notifications", {
+    id: text('id').primaryKey().$defaultFn(() => crypto.randomUUID()),
+    userId: text('userId').notNull().references(() => user.id),
+    type: text('type').notNull(),
+    title: text('title').notNull(),
+    message: text('message'),
+    relatedEntityType: text('relatedEntityType'),
+    relatedEntityId: text('relatedEntityId'),
+    isRead: boolean('isRead').default(false),
+    createdAt: timestamp('createdAt', { withTimezone: true }).defaultNow()
 });

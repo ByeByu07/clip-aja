@@ -1,0 +1,120 @@
+
+ ▐▛███▜▌   Claude Code v2.0.1
+▝▜█████▛▘  Sonnet 4.5 · API Usage Billing
+  ▘▘ ▝▝    E:\Projects\Hackaton\Dicoding - ViralSaiki
+
+> /output-style 
+  ⎿  Set output style to default
+
+> can u see my api route, i want to create a feature that the owner will be reviewing the post from clipper. i want to create a page thta will displaying like 
+tinder, so the owner can easy to approve or reject. can u suuggest how should i add new route for that. just explanation, no coding. 
+
+● I'll examine your API routes to understand the current structure and suggest how to add a new route for the post review feature.
+
+● Search(pattern: "**/api/**/*.ts")
+  ⎿  Found 51 files (ctrl+o to expand)
+
+● Search(pattern: "**/api/**/*.js")
+  ⎿  Found 58 files (ctrl+o to expand)
+
+● Bash(git log --oneline --all -20)
+  ⎿  c9c2848 fix: remove the shorcut button to swicth betweeen two roles dashboard
+     5e724de fix: merge the rest of conflict
+     094b971 fix: merge conflict
+     … +17 lines (ctrl+o to expand)
+
+● Read(app\api\posts\route.ts)
+  ⎿  Read 309 lines (ctrl+o to expand)
+
+● Read(app\api\contests\route.ts)
+  ⎿  Read 156 lines (ctrl+o to expand)
+
+● Search(pattern: "**/app/**/*dashboard*/**")
+  ⎿  Found 8 files (ctrl+o to expand)
+
+● Search(pattern: "**/drizzle/schema*")
+  ⎿  Found 1 file (ctrl+o to expand)
+
+● Search(pattern: "**/dashboard/owner/**")
+  ⎿  Found 0 files 
+
+● Read(drizzle\schema.ts)
+  ⎿  Read 251 lines (ctrl+o to expand)
+
+● Search(pattern: "**/app/dashboard/**/page.tsx")
+  ⎿  Found 5 files (ctrl+o to expand)
+
+● Based on your API routes and database schema, here's my suggestion for adding a Tinder-style post review feature for owners:
+
+  Route Structure Suggestion
+
+  New API Route: app/api/posts/review/route.ts
+
+  This would handle:
+  - GET - Fetch pending posts that need review (with pagination for the swipe experience)
+  - PATCH - Update post status (approve/reject with rejection reason)
+
+  How It Should Work
+
+  1. API Endpoint Design
+
+  GET /api/posts/review
+  - Query parameters: ?contestId=xxx&limit=1 (fetch one post at a time for Tinder UX)
+  - Filter posts by status: 'submitted' or 'reviewing'
+  - Only fetch posts for contests owned by the authenticated user
+  - Return post with contest details, user info, and TikTok video preview data
+
+  PATCH /api/posts/review
+  - Body: { postId, action: 'approve' | 'reject', rejectionReason?: string }
+  - Update posts.status to either 'approved' or 'rejected'
+  - Set posts.approvedAt if approved
+  - Set posts.rejectionReason if rejected
+  - Update posts.publishedAt if approved (or set to published status)
+
+  2. Frontend Page Structure
+
+  New Page: app/dashboard/owner/review-posts/page.tsx
+
+  This page would:
+  - Display one post at a time in a card format (like Tinder)
+  - Show TikTok video embed or preview
+  - Show clipper's name, contest name, view count, calculated payout
+  - Have two buttons: ✓ Approve (swipe right) / ✗ Reject (swipe left)
+  - Use gesture/swipe animations for better UX
+  - Auto-load next post after action
+
+  3. Database Changes Needed
+
+  Currently in your schema, posts.status has these options:
+  - 'submitted' - Just submitted by clipper
+  - 'reviewing' - Owner is currently reviewing
+  - 'approved' - Owner approved
+  - 'rejected' - Owner rejected
+  - 'published' - Live and visible
+  - 'claimed' - Payment claimed
+
+  You might want to adjust the flow based on whether you want:
+  - Auto-publish on approve → Change status directly from 'submitted' → 'approved' → 'published'
+  - Manual publish → Keep as 'approved' first, then owner publishes later
+
+  4. Why This Structure Makes Sense
+
+  1. Separation of concerns - Review logic is separate from regular post CRUD
+  2. Owner-specific - Easy to add owner authentication checks
+  3. Scalable - Can add filters (by contest, by date, by clipper)
+  4. Tinder UX ready - Fetching one at a time optimizes for swipe interface
+  5. Action tracking - Separate endpoint makes it easy to log review history
+
+  5. Additional Features You Could Add
+
+  - Bulk actions - Review multiple posts at once
+  - Review history - Track who reviewed what and when
+  - Auto-approval rules - Set criteria for auto-approval
+  - Priority queue - Show posts from certain contests first
+  - Filters - Filter by contest, date range, or clipper level
+
+  Would you like me to proceed with implementing this structure?
+
+
+
+
