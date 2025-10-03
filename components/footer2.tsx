@@ -1,4 +1,5 @@
 import { Logo, LogoImage, LogoText } from "@/components/logo";
+import Link from "next/link";
 
 interface MenuItem {
   title: string;
@@ -98,6 +99,7 @@ const Footer2 = ({
                 </Logo>
               </div>
               <p className=" font-bold tracking-wider text-muted-foreground">{copyright}</p>
+              <Link href="/privacy-policy" className="underline text-muted-foreground">Privacy Policy</Link>
             </div>
             {/* {menuItems.map((section, sectionIdx) => (
               <div key={sectionIdx}>
