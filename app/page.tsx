@@ -126,11 +126,13 @@ const reviews = [
 ]
 
 
-const androidSrc = "https://images.unsplash.com/photo-1511485977113-f34c92461ad9?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80"
+// const androidSrc = "https://images.unsplash.com/photo-1511485977113-f34c92461ad9?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80"
 
-const ClipperMockCard = () => {
+const clipperHeroImageSrc = ["/images/clipper-hero/1.jpg", "/images/clipper-hero/2.webp","/images/clipper-hero/3.png","/images/clipper-hero/4.png"]
+
+const ClipperMockCard = ({ src }: { src: string }) => {
   return (
-    <Android src={androidSrc} />
+    <Android src={src} />
   )
 }
 
@@ -317,7 +319,9 @@ export default function Home() {
         <h3 className="text-2xl text-center text-[Bebas_Nue]">lebih dari 1000+ clipper mendistribusikan brandmu</h3>
         {/* <BeamComponent className="w-full h-fit" /> */}
         <Marquee repeat={5} reverse className="[--duration:10s]">
-          <ClipperMockCard />
+          {clipperHeroImageSrc.map((src, index) => (
+            <ClipperMockCard key={index} src={src} />
+          ))}
         </Marquee>
 
       </section>
@@ -340,7 +344,7 @@ export default function Home() {
             }}
             className="flex flex-col items-center gap-5"
           >
-            <Image src="/images/web/dummy.png" className="w-80 rounded-lg" alt="hero" width={1000} height={1000} />
+            <Image src="/images/result-main-page/1.jpg" className="w-80 rounded-lg" alt="hero" width={1000} height={1000} />
             {/* <NumberTicker className="text-3xl" value={1000000} delay={2} /> */}
           </motion.div>
           <motion.div
@@ -358,7 +362,7 @@ export default function Home() {
             }}
             className="flex flex-col items-center gap-5"
           >
-            <Image src="/images/web/dummy.png" className="w-80 rounded-lg" alt="hero" width={1000} height={1000} />
+            <Image src="/images/result-main-page/2.jpeg" className="w-80 rounded-lg" alt="hero" width={1000} height={1000} />
             {/* <NumberTicker className="text-3xl" value={4426900} delay={2} /> */}
           </motion.div>
           <motion.div
@@ -378,7 +382,7 @@ export default function Home() {
             }}
             className="flex flex-col items-center gap-5"
           >
-            <Image src="/images/web/dummy.png" className="w-80 rounded-lg" alt="hero" width={1000} height={1000} />
+            <Image src="/images/result-main-page/3.jpg" className="w-80 rounded-lg" alt="hero" width={1000} height={1000} />
             {/* <NumberTicker className="text-3xl" value={10000000} delay={2} /> */}
           </motion.div>
         </div>

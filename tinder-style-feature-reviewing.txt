@@ -1,0 +1,1208 @@
+
+ ▐▛███▜▌   Claude Code v2.0.5
+▝▜█████▛▘  Sonnet 4.5 · API Usage Billing
+  ▘▘ ▝▝    E:\Projects\Hackaton\Dicoding - ViralSaiki
+
+> can u help me to implement & 'e:\Projects\Hackaton\Dicoding - ViralSaiki\app\dashboard\owner\review-posts\page.tsx', in the drawer should display the rest of 
+current payout and any correlated of contest that important for owner and implement tinder style to reveiew the post of clipper(swipe left and right), i included 
+the gif in thta page. implemen the api for that, previously i chatted with you, see & 'e:\Projects\Hackaton\Dicoding - 
+ViralSaiki\2025-10-03-caveat-the-messages-below-were-generated-by-the-u.txt'. for the dialog, that will be display once, for tutorial, use local storage or cookie
+ to save that uuser has see thta. 
+
+● I'll help you implement the review posts page with a Tinder-style swipe interface and drawer with contest details. Let me start by reading the relevant files.
+
+● Read(app\dashboard\owner\review-posts\page.tsx)
+  ⎿  Read 119 lines (ctrl+o to expand)
+
+● Read(2025-10-03-caveat-the-messages-below-were-generated-by-the-u.txt)
+  ⎿  Read 121 lines (ctrl+o to expand)
+
+● Search(pattern: "**/*api*route.ts")
+  ⎿  Found 0 files 
+
+● Search(pattern: "**/api/**/route.ts")
+  ⎿  Found 9 files (ctrl+o to expand)
+
+● Search(pattern: "**/schema.ts")
+  ⎿  Found 3 files (ctrl+o to expand)
+
+● Read(drizzle\schema.ts)
+  ⎿  Read 251 lines (ctrl+o to expand)
+
+● Read(app\api\posts\route.ts)
+  ⎿  Read 309 lines (ctrl+o to expand)
+
+● Read(app\api\contests\route.ts)
+  ⎿  Read 156 lines (ctrl+o to expand)
+
+● Write(app\api\posts\review\route.ts)
+  ⎿  User rejected update to app\api\posts\review\route.ts
+         1 -  import { NextRequest, NextResponse } from 'next/server';
+         2 -  import { db } from '@/lib/db';
+         3 -  import { posts, contests, user } from '@/drizzle/schema';
+         4 -  import { eq, and, desc } from 'drizzle-orm';
+         5 -  import { auth } from '@/lib/auth';
+         6 -  
+         7 -  // GET - Fetch published posts for owner to review
+         8 -  export async function GET(request: NextRequest) {
+         9 -      try {
+        10 -          const session = await auth.api.getSession({
+        11 -              headers: request.headers
+        12 -          });
+        13 -  
+        14 -          if (!session?.user.id) {
+        15 -              return NextResponse.json({
+        16 -                  status: "error",
+        17 -                  code: 401,
+        18 -                  message: "Unauthorized",
+        19 -                  data: null,
+        20 -                  errors: ["User not authenticated"]
+        21 -              }, { status: 401 });
+        22 -          }
+        23 -  
+        24 -          const { searchParams } = new URL(request.url);
+        25 -          const contestId = searchParams.get('contestId');
+        26 -          const limit = parseInt(searchParams.get('limit') || '10');
+        27 -  
+        28 -          if (!contestId) {
+        29 -              return NextResponse.json({
+        30 -                  status: "error",
+        31 -                  code: 400,
+        32 -                  message: "Missing contestId",
+        33 -                  data: null,
+        34 -                  errors: ["contestId is required"]
+        35 -              }, { status: 400 });
+        36 -          }
+        37 -  
+        38 -          // Verify the contest belongs to the user
+        39 -          const [contest] = await db
+        40 -              .select()
+        41 -              .from(contests)
+        42 -              .where(and(
+        43 -                  eq(contests.id, contestId),
+        44 -                  eq(contests.userId, String(session.user.id))
+        45 -              ))
+        46 -              .limit(1);
+        47 -  
+        48 -          if (!contest) {
+        49 -              return NextResponse.json({
+        50 -                  status: "error",
+        51 -                  code: 404,
+        52 -                  message: "Contest not found or unauthorized",
+        53 -                  data: null,
+        54 -                  errors: ["Contest not found or you don't have permission"]
+        55 -              }, { status: 404 });
+        56 -          }
+        57 -  
+        58 -          // Fetch published posts that need owner review
+        59 -          const reviewPosts = await db
+        60 -              .select({
+        61 -                  postId: posts.id,
+        62 -                  postUrl: posts.url,
+        63 -                  postStatus: posts.status,
+        64 -                  postViews: posts.views,
+        65 -                  postCalculatedAmount: posts.calculatedAmount,
+        66 -                  postSubmittedAt: posts.submittedAt,
+        67 -                  postPublishedAt: posts.publishedAt,
+        68 -                  postCreatedAt: posts.createdAt,
+        69 -                  clipperId: user.id,
+        70 -                  clipperName: user.name,
+        71 -                  clipperUsername: user.username,
+        72 -                  clipperImage: user.image,
+        73 -                  clipperLevel: user.clipperLevel,
+        74 -                  contestId: contests.id,
+        75 -                  contestTitle: contests.title,
+        76 -                  contestPayPerView: contests.payPerView,
+        77 -                  contestMaxPayout: contests.maxPayout,
+        78 -                  contestCurrentPayout: contests.currentPayout,
+        79 -                  contestStatus: contests.status,
+        80 -              })
+        81 -              .from(posts)
+        82 -              .innerJoin(contests, eq(posts.contestId, contests.id))
+        83 -              .innerJoin(user, eq(posts.userId, user.id))
+        84 -              .where(and(
+        85 -                  eq(posts.contestId, contestId),
+        86 -                  eq(posts.status, 'published')
+        87 -              ))
+        88 -              .orderBy(desc(posts.publishedAt))
+        89 -              .limit(limit);
+        90 -  
+        91 -          // Calculate remaining payout
+        92 -          const remainingPayout = parseFloat(contest.maxPayout) - parseFloat(contest.currentPayout);
+        93 -  
+        94 -          return NextResponse.json({
+        95 -              status: "success",
+        96 -              code: 200,
+        97 -              message: "Review posts retrieved successfully",
+        98 -              data: {
+        99 -                  posts: reviewPosts,
+       100 -                  contest: {
+       101 -                      id: contest.id,
+       102 -                      title: contest.title,
+       103 -                      status: contest.status,
+       104 -                      payPerView: contest.payPerView,
+       105 -                      maxPayout: contest.maxPayout,
+       106 -                      currentPayout: contest.currentPayout,
+       107 -                      remainingPayout: remainingPayout.toString(),
+       108 -                  },
+       109 -                  totalPendingReview: reviewPosts.length
+       110 -              },
+       111 -              errors: null
+       112 -          });
+       113 -  
+       114 -      } catch (error) {
+       115 -          console.error('Fetch review posts error:', error);
+       116 -          return NextResponse.json({
+       117 -              status: "error",
+       118 -              code: 500,
+       119 -              message: "Internal server error",
+       120 -              data: null,
+       121 -              errors: ["Failed to fetch review posts"]
+       122 -          }, { status: 500 });
+       123 -      }
+       124 -  }
+       125 -  
+       126 -  // PATCH - Approve or reject a published post
+       127 -  export async function PATCH(request: NextRequest) {
+       128 -      try {
+       129 -          const session = await auth.api.getSession({
+       130 -              headers: request.headers
+       131 -          });
+       132 -  
+       133 -          if (!session?.user.id) {
+       134 -              return NextResponse.json({
+       135 -                  status: "error",
+       136 -                  code: 401,
+       137 -                  message: "Unauthorized",
+       138 -                  data: null,
+       139 -                  errors: ["User not authenticated"]
+       140 -              }, { status: 401 });
+       141 -          }
+       142 -  
+       143 -          const body = await request.json();
+       144 -          const { postId, action, rejectionReason } = body;
+       145 -  
+       146 -          // Validate required fields
+       147 -          if (!postId || !action) {
+       148 -              return NextResponse.json({
+       149 -                  status: "error",
+       150 -                  code: 400,
+       151 -                  message: "Missing required fields",
+       152 -                  data: null,
+       153 -                  errors: ["postId and action are required"]
+       154 -              }, { status: 400 });
+       155 -          }
+       156 -  
+       157 -          if (!['approve', 'reject'].includes(action)) {
+       158 -              return NextResponse.json({
+       159 -                  status: "error",
+       160 -                  code: 400,
+       161 -                  message: "Invalid action",
+       162 -                  data: null,
+       163 -                  errors: ["action must be either 'approve' or 'reject'"]
+       164 -              }, { status: 400 });
+       165 -          }
+       166 -  
+       167 -          // Fetch the post with contest information
+       168 -          const [postData] = await db
+       169 -              .select({
+       170 -                  post: posts,
+       171 -                  contest: contests
+       172 -              })
+       173 -              .from(posts)
+       174 -              .innerJoin(contests, eq(posts.contestId, contests.id))
+       175 -              .where(eq(posts.id, postId))
+       176 -              .limit(1);
+       177 -  
+       178 -          if (!postData) {
+       179 -              return NextResponse.json({
+       180 -                  status: "error",
+       181 -                  code: 404,
+       182 -                  message: "Post not found",
+       183 -                  data: null,
+       184 -                  errors: ["Post not found"]
+       185 -              }, { status: 404 });
+       186 -          }
+       187 -  
+       188 -          // Verify the contest belongs to the user
+       189 -          if (postData.contest.userId !== String(session.user.id)) {
+       190 -              return NextResponse.json({
+       191 -                  status: "error",
+       192 -                  code: 403,
+       193 -                  message: "Unauthorized",
+       194 -                  data: null,
+       195 -                  errors: ["You don't have permission to review this post"]
+       196 -              }, { status: 403 });
+       197 -          }
+       198 -  
+       199 -          // Check if post is published (ready for owner review)
+       200 -          if (postData.post.status !== 'published') {
+       201 -              return NextResponse.json({
+       202 -                  status: "error",
+       203 -                  code: 400,
+       204 -                  message: "Post cannot be reviewed",
+       205 -                  data: null,
+       206 -                  errors: ["Only published posts can be reviewed"]
+       207 -              }, { status: 400 });
+       208 -          }
+       209 -  
+       210 -          let updatedPost;
+       211 -  
+       212 -          if (action === 'approve') {
+       213 -              // Approve the post - add payout to contest's current payout
+       214 -              const calculatedAmount = parseFloat(postData.post.calculatedAmount);
+       215 -              const newCurrentPayout = parseFloat(postData.contest.currentPayout) + calculatedAmount;
+       216 -  
+       217 -              updatedPost = await db
+       218 -                  .update(posts)
+       219 -                  .set({
+       220 -                      status: 'approved',
+       221 -                      approvedAt: new Date(),
+       222 -                      updatedAt: new Date()
+       223 -                  })
+       224 -                  .where(eq(posts.id, postId))
+       225 -                  .returning();
+       226 -  
+       227 -              // Update contest's current payout (add approved post amount)
+       228 -              await db
+       229 -                  .update(contests)
+       230 -                  .set({
+       231 -                      currentPayout: newCurrentPayout.toString(),
+       232 -                      updatedAt: new Date()
+       233 -                  })
+       234 -                  .where(eq(contests.id, postData.contest.id));
+       235 -  
+       236 -          } else {
+       237 -              // Reject the post - just change status, no payout change needed
+       238 -              updatedPost = await db
+       239 -                  .update(posts)
+       240 -                  .set({
+       241 -                      status: 'rejected',
+       242 -                      rejectionReason: rejectionReason || 'No reason provided',
+       243 -                      updatedAt: new Date()
+       244 -                  })
+       245 -                  .where(eq(posts.id, postId))
+       246 -                  .returning();
+       247 -          }
+       248 -  
+       249 -          return NextResponse.json({
+       250 -              status: "success",
+       251 -              code: 200,
+       252 -              message: `Post ${action}d successfully`,
+       253 -              data: updatedPost[0],
+       254 -              errors: null
+       255 -          });
+       256 -  
+       257 -      } catch (error) {
+       258 -          console.error('Review post error:', error);
+       259 -          return NextResponse.json({
+       260 -              status: "error",
+       261 -              code: 500,
+       262 -              message: "Internal server error",
+       263 -              data: null,
+       264 -              errors: ["Failed to review post"]
+       265 -          }, { status: 500 });
+       266 -      }
+       267 -  }
+         1 +  import { NextRequest, NextResponse } from 'next/server';
+         2 +  import { db } from '@/lib/db';
+         3 +  import { posts, contests, user } from '@/drizzle/schema';
+         4 +  import { eq, and, or, desc, inArray } from 'drizzle-orm';
+         5 +  import { auth } from '@/lib/auth';
+         6 +  
+         7 +  // GET - Fetch posts pending review for a specific contest
+         8 +  export async function GET(request: NextRequest) {
+         9 +      try {
+        10 +          const session = await auth.api.getSession({
+        11 +              headers: request.headers
+        12 +          });
+        13 +  
+        14 +          if (!session?.user.id) {
+        15 +              return NextResponse.json({
+        16 +                  status: "error",
+        17 +                  code: 401,
+        18 +                  message: "Unauthorized",
+        19 +                  data: null,
+        20 +                  errors: ["User not authenticated"]
+        21 +              }, { status: 401 });
+        22 +          }
+        23 +  
+        24 +          const { searchParams } = new URL(request.url);
+        25 +          const contestId = searchParams.get('contestId');
+        26 +          const limit = parseInt(searchParams.get('limit') || '10');
+        27 +  
+        28 +          if (!contestId) {
+        29 +              return NextResponse.json({
+        30 +                  status: "error",
+        31 +                  code: 400,
+        32 +                  message: "Missing contestId",
+        33 +                  data: null,
+        34 +                  errors: ["contestId is required"]
+        35 +              }, { status: 400 });
+        36 +          }
+        37 +  
+        38 +          // Verify the contest belongs to the user
+        39 +          const [contest] = await db
+        40 +              .select()
+        41 +              .from(contests)
+        42 +              .where(and(
+        43 +                  eq(contests.id, contestId),
+        44 +                  eq(contests.userId, String(session.user.id))
+        45 +              ))
+        46 +              .limit(1);
+        47 +  
+        48 +          if (!contest) {
+        49 +              return NextResponse.json({
+        50 +                  status: "error",
+        51 +                  code: 404,
+        52 +                  message: "Contest not found or unauthorized",
+        53 +                  data: null,
+        54 +                  errors: ["Contest not found or you don't have permission"]
+        55 +              }, { status: 404 });
+        56 +          }
+        57 +  
+        58 +          // Fetch posts that need review (submitted or reviewing status)
+        59 +          const reviewPosts = await db
+        60 +              .select({
+        61 +                  postId: posts.id,
+        62 +                  postUrl: posts.url,
+        63 +                  postStatus: posts.status,
+        64 +                  postViews: posts.views,
+        65 +                  postCalculatedAmount: posts.calculatedAmount,
+        66 +                  postSubmittedAt: posts.submittedAt,
+        67 +                  postCreatedAt: posts.createdAt,
+        68 +                  clipperId: user.id,
+        69 +                  clipperName: user.name,
+        70 +                  clipperUsername: user.username,
+        71 +                  clipperImage: user.image,
+        72 +                  clipperLevel: user.clipperLevel,
+        73 +                  contestId: contests.id,
+        74 +                  contestTitle: contests.title,
+        75 +                  contestPayPerView: contests.payPerView,
+        76 +                  contestMaxPayout: contests.maxPayout,
+        77 +                  contestCurrentPayout: contests.currentPayout,
+        78 +                  contestStatus: contests.status,
+        79 +              })
+        80 +              .from(posts)
+        81 +              .innerJoin(contests, eq(posts.contestId, contests.id))
+        82 +              .innerJoin(user, eq(posts.userId, user.id))
+        83 +              .where(and(
+        84 +                  eq(posts.contestId, contestId),
+        85 +                  or(
+        86 +                      eq(posts.status, 'submitted'),
+        87 +                      eq(posts.status, 'reviewing')
+        88 +                  )
+        89 +              ))
+        90 +              .orderBy(desc(posts.submittedAt))
+        91 +              .limit(limit);
+        92 +  
+        93 +          // Calculate remaining payout
+        94 +          const remainingPayout = parseFloat(contest.maxPayout) - parseFloat(contest.currentPayout);
+        95 +  
+        96 +          return NextResponse.json({
+        97 +              status: "success",
+        98 +              code: 200,
+        99 +              message: "Review posts retrieved successfully",
+       100 +              data: {
+       101 +                  posts: reviewPosts,
+       102 +                  contest: {
+       103 +                      id: contest.id,
+       104 +                      title: contest.title,
+       105 +                      status: contest.status,
+       106 +                      payPerView: contest.payPerView,
+       107 +                      maxPayout: contest.maxPayout,
+       108 +                      currentPayout: contest.currentPayout,
+       109 +                      remainingPayout: remainingPayout.toString(),
+       110 +                  },
+       111 +                  totalPendingReview: reviewPosts.length
+       112 +              },
+       113 +              errors: null
+       114 +          });
+       115 +  
+       116 +      } catch (error) {
+       117 +          console.error('Fetch review posts error:', error);
+       118 +          return NextResponse.json({
+       119 +              status: "error",
+       120 +              code: 500,
+       121 +              message: "Internal server error",
+       122 +              data: null,
+       123 +              errors: ["Failed to fetch review posts"]
+       124 +          }, { status: 500 });
+       125 +      }
+       126 +  }
+       127 +  
+       128 +  // PATCH - Approve or reject a post
+       129 +  export async function PATCH(request: NextRequest) {
+       130 +      try {
+       131 +          const session = await auth.api.getSession({
+       132 +              headers: request.headers
+       133 +          });
+       134 +  
+       135 +          if (!session?.user.id) {
+       136 +              return NextResponse.json({
+       137 +                  status: "error",
+       138 +                  code: 401,
+       139 +                  message: "Unauthorized",
+       140 +                  data: null,
+       141 +                  errors: ["User not authenticated"]
+       142 +              }, { status: 401 });
+       143 +          }
+       144 +  
+       145 +          const body = await request.json();
+       146 +          const { postId, action, rejectionReason } = body;
+       147 +  
+       148 +          // Validate required fields
+       149 +          if (!postId || !action) {
+       150 +              return NextResponse.json({
+       151 +                  status: "error",
+       152 +                  code: 400,
+       153 +                  message: "Missing required fields",
+       154 +                  data: null,
+       155 +                  errors: ["postId and action are required"]
+       156 +              }, { status: 400 });
+       157 +          }
+       158 +  
+       159 +          if (!['approve', 'reject'].includes(action)) {
+       160 +              return NextResponse.json({
+       161 +                  status: "error",
+       162 +                  code: 400,
+       163 +                  message: "Invalid action",
+       164 +                  data: null,
+       165 +                  errors: ["action must be either 'approve' or 'reject'"]
+       166 +              }, { status: 400 });
+       167 +          }
+       168 +  
+       169 +          // Fetch the post with contest information
+       170 +          const [postData] = await db
+       171 +              .select({
+       172 +                  post: posts,
+       173 +                  contest: contests
+       174 +              })
+       175 +              .from(posts)
+       176 +              .innerJoin(contests, eq(posts.contestId, contests.id))
+       177 +              .where(eq(posts.id, postId))
+       178 +              .limit(1);
+       179 +  
+       180 +          if (!postData) {
+       181 +              return NextResponse.json({
+       182 +                  status: "error",
+       183 +                  code: 404,
+       184 +                  message: "Post not found",
+       185 +                  data: null,
+       186 +                  errors: ["Post not found"]
+       187 +              }, { status: 404 });
+       188 +          }
+       189 +  
+       190 +          // Verify the contest belongs to the user
+       191 +          if (postData.contest.userId !== String(session.user.id)) {
+       192 +              return NextResponse.json({
+       193 +                  status: "error",
+       194 +                  code: 403,
+       195 +                  message: "Unauthorized",
+       196 +                  data: null,
+       197 +                  errors: ["You don't have permission to review this post"]
+       198 +              }, { status: 403 });
+       199 +          }
+       200 +  
+       201 +          // Check if post is in reviewable status
+       202 +          if (!['submitted', 'reviewing'].includes(postData.post.status)) {
+       203 +              return NextResponse.json({
+       204 +                  status: "error",
+       205 +                  code: 400,
+       206 +                  message: "Post cannot be reviewed",
+       207 +                  data: null,
+       208 +                  errors: ["Post is not in reviewable status"]
+       209 +              }, { status: 400 });
+       210 +          }
+       211 +  
+       212 +          let updatedPost;
+       213 +  
+       214 +          if (action === 'approve') {
+       215 +              // Approve the post - set to published
+       216 +              updatedPost = await db
+       217 +                  .update(posts)
+       218 +                  .set({
+       219 +                      status: 'published',
+       220 +                      approvedAt: new Date(),
+       221 +                      publishedAt: new Date(),
+       222 +                      updatedAt: new Date()
+       223 +                  })
+       224 +                  .where(eq(posts.id, postId))
+       225 +                  .returning();
+       226 +  
+       227 +              // Update contest's current payout
+       228 +              const calculatedAmount = parseFloat(postData.post.calculatedAmount);
+       229 +              const newCurrentPayout = parseFloat(postData.contest.currentPayout) + calculatedAmount;
+       230 +  
+       231 +              await db
+       232 +                  .update(contests)
+       233 +                  .set({
+       234 +                      currentPayout: newCurrentPayout.toString(),
+       235 +                      updatedAt: new Date()
+       236 +                  })
+       237 +                  .where(eq(contests.id, postData.contest.id));
+       238 +  
+       239 +          } else {
+       240 +              // Reject the post
+       241 +              updatedPost = await db
+       242 +                  .update(posts)
+       243 +                  .set({
+       244 +                      status: 'rejected',
+       245 +                      rejectionReason: rejectionReason || 'No reason provided',
+       246 +                      updatedAt: new Date()
+       247 +                  })
+       248 +                  .where(eq(posts.id, postId))
+       249 +                  .returning();
+       250 +          }
+       251 +  
+       252 +          return NextResponse.json({
+       253 +              status: "success",
+       254 +              code: 200,
+       255 +              message: `Post ${action}d successfully`,
+       256 +              data: updatedPost[0],
+       257 +              errors: null
+       258 +          });
+       259 +  
+       260 +      } catch (error) {
+       261 +          console.error('Review post error:', error);
+       262 +          return NextResponse.json({
+       263 +              status: "error",
+       264 +              code: 500,
+       265 +              message: "Internal server error",
+       266 +              data: null,
+       267 +              errors: ["Failed to review post"]
+       268 +          }, { status: 500 });
+       269 +      }
+       270 +  }
+
+> ouh the flow is user create video and published that, then they are will create post will that link, so the stautus is "submitted", the "reviewing" is from our 
+layer, but i skip that for now, then status skip to "published", so then the owner of contest will approved or rejected 
+
+● I understand now! Let me clarify the flow:
+
+  1. Clipper creates video and publishes it
+  2. Clipper submits post with link → status: "submitted"
+  3. (Skip "reviewing" for now)
+  4. Auto-published → status: "published"
+  5. Owner reviews the published posts → can approve or reject them
+
+  So the owner reviews posts that are already "published", and then:
+  - Approve → Post stays published and payout is confirmed/locked
+  - Reject → Post is rejected (maybe payout removed or marked invalid)
+
+  Should I update the API to fetch posts with status "published" instead of "submitted/reviewing"? And what should happen to the post status after
+  approval/rejection?
+
+> yeah that sound good 
+
+● Write(app\api\posts\review\route.ts)
+  ⎿  Wrote 1 lines to app\api\posts\review\route.ts           
+     import { NextRequest, NextResponse } from 'next/server';
+     import { db } from '@/lib/db';
+     import { posts, contests, user } from '@/drizzle/schema';
+     import { eq, and, desc } from 'drizzle-orm';
+     import { auth } from '@/lib/auth';
+     // GET - Fetch published posts for owner to review
+     export async function GET(request: NextRequest) {
+         try {
+             const session = await auth.api.getSession({
+
+● Search(pattern: "**/use-mobile.ts")
+  ⎿  Found 1 file (ctrl+o to expand)
+
+● Update(app\dashboard\owner\review-posts\page.tsx)
+  ⎿  File must be read first
+
+● Read(app\dashboard\owner\review-posts\page.tsx)
+  ⎿  Read 119 lines (ctrl+o to expand)
+  ⎿  API Error: 500 {"type":"error","error":{"type":"api_error","message":"Internal server error"},"request_id":null}
+
+> continue 
+  ⎿  API Error: 500 {"type":"error","error":{"type":"api_error","message":"Internal server error"},"request_id":null}
+
+> continue 
+
+● Update(app\dashboard\owner\review-posts\page.tsx)
+  ⎿  Updated app\dashboard\owner\review-posts\page.tsx with 294 additions and 58 removals                                                                      
+       1    "use client"
+       2    
+       3    import { Card } from "@/components/ui/card";
+       4 -  import { AndroidIframe } from "@/components/ui/shadcn-io/android-iframe";
+       5 -  import { useSearchParams } from "next/navigation";
+       4 +  import { useSearchParams, useRouter } from "next/navigation";
+       5    import {
+       6        Drawer,
+       7 -      DrawerClose,
+       7        DrawerContent,
+       8        DrawerDescription,
+       9        DrawerFooter,
+     ...
+        20        DialogDescription,
+        21        DialogHeader,
+        22        DialogTitle,
+        23 -      DialogTrigger,
+        23    } from "@/components/ui/dialog"
+        24 -  import { useState, useEffect } from "react";
+        24 +  import { useState, useEffect, useRef } from "react";
+        25    import Image from "next/image";
+        26    import { useIsMobile } from "@/hooks/use-mobile";
+        27 -  import { Check, Info, XIcon } from "lucide-react";
+        27 +  import { Check, XIcon, Loader2 } from "lucide-react";
+        28    
+        29 -  export default function ReviewPostsPage() {
+        29 +  interface PostData {
+        30 +      postId: string;
+        31 +      postUrl: string;
+        32 +      postStatus: string;
+        33 +      postViews: number;
+        34 +      postCalculatedAmount: string;
+        35 +      postSubmittedAt: string;
+        36 +      postPublishedAt: string;
+        37 +      clipperName: string;
+        38 +      clipperUsername: string;
+        39 +      clipperLevel: number;
+        40 +  }
+        41    
+        42 +  interface ContestData {
+        43 +      id: string;
+        44 +      title: string;
+        45 +      status: string;
+        46 +      payPerView: string;
+        47 +      maxPayout: string;
+        48 +      currentPayout: string;
+        49 +      remainingPayout: string;
+        50 +  }
+        51 +  
+        52 +  interface ReviewData {
+        53 +      posts: PostData[];
+        54 +      contest: ContestData;
+        55 +      totalPendingReview: number;
+        56 +  }
+        57 +  
+        58 +  export default function ReviewPostsPage() {
+        59        const searchParams = useSearchParams();
+        60 +      const router = useRouter();
+        61        const contestId = searchParams.get('contestId');
+        62 -      const postCount = 10;
+        63 -      const videoId = "7533089792901352717"
+        64 -      const [open, setOpen] = useState(true);
+        62 +      const [tutorialOpen, setTutorialOpen] = useState(false);
+        63 +      const [loading, setLoading] = useState(true);
+        64 +      const [reviewData, setReviewData] = useState<ReviewData | null>(null);
+        65 +      const [currentIndex, setCurrentIndex] = useState(0);
+        66 +      const [swipeDirection, setSwipeDirection] = useState<'left' | 'right' | null>(null);
+        67 +      const [isProcessing, setIsProcessing] = useState(false);
+        68        const isMobile = useIsMobile();
+        69    
+        70 +      const cardRef = useRef<HTMLDivElement>(null);
+        71 +      const startX = useRef(0);
+        72 +      const currentX = useRef(0);
+        73 +      const isDragging = useRef(false);
+        74 +  
+        75 +      // Check if user has seen the tutorial
+        76        useEffect(() => {
+        77 -          setOpen(true);
+        77 +          const hasSeenTutorial = localStorage.getItem('reviewTutorialSeen');
+        78 +          if (!hasSeenTutorial) {
+        79 +              setTutorialOpen(true);
+        80 +          }
+        81        }, []);
+        82    
+        83 +      const handleTutorialClose = (open: boolean) => {
+        84 +          setTutorialOpen(open);
+        85 +          if (!open) {
+        86 +              localStorage.setItem('reviewTutorialSeen', 'true');
+        87 +          }
+        88 +      };
+        89 +  
+        90 +      // Fetch review posts
+        91 +      useEffect(() => {
+        92 +          if (!contestId) {
+        93 +              router.push('/dashboard/owner');
+        94 +              return;
+        95 +          }
+        96 +  
+        97 +          const fetchReviewPosts = async () => {
+        98 +              try {
+        99 +                  setLoading(true);
+       100 +                  const response = await fetch(`/api/posts/review?contestId=${contestId}&limit=50`);
+       101 +                  const data = await response.json();
+       102 +  
+       103 +                  if (data.status === 'success') {
+       104 +                      setReviewData(data.data);
+       105 +                  } else {
+       106 +                      console.error('Failed to fetch review posts:', data.message);
+       107 +                  }
+       108 +              } catch (error) {
+       109 +                  console.error('Error fetching review posts:', error);
+       110 +              } finally {
+       111 +                  setLoading(false);
+       112 +              }
+       113 +          };
+       114 +  
+       115 +          fetchReviewPosts();
+       116 +      }, [contestId, router]);
+       117 +  
+       118 +      // Handle swipe/review action
+       119 +      const handleReview = async (action: 'approve' | 'reject') => {
+       120 +          if (!reviewData || currentIndex >= reviewData.posts.length || isProcessing) return;
+       121 +  
+       122 +          const currentPost = reviewData.posts[currentIndex];
+       123 +          setIsProcessing(true);
+       124 +  
+       125 +          try {
+       126 +              const response = await fetch('/api/posts/review', {
+       127 +                  method: 'PATCH',
+       128 +                  headers: {
+       129 +                      'Content-Type': 'application/json',
+       130 +                  },
+       131 +                  body: JSON.stringify({
+       132 +                      postId: currentPost.postId,
+       133 +                      action: action,
+       134 +                      rejectionReason: action === 'reject' ? 'Rejected by owner' : undefined
+       135 +                  })
+       136 +              });
+       137 +  
+       138 +              const data = await response.json();
+       139 +  
+       140 +              if (data.status === 'success') {
+       141 +                  setSwipeDirection(action === 'approve' ? 'right' : 'left');
+       142 +                  setTimeout(() => {
+       143 +                      setCurrentIndex(prev => prev + 1);
+       144 +                      setSwipeDirection(null);
+       145 +                  }, 300);
+       146 +              } else {
+       147 +                  console.error('Failed to review post:', data.message);
+       148 +                  alert(`Failed to ${action} post: ${data.message}`);
+       149 +              }
+       150 +          } catch (error) {
+       151 +              console.error('Error reviewing post:', error);
+       152 +              alert(`Error reviewing post`);
+       153 +          } finally {
+       154 +              setIsProcessing(false);
+       155 +          }
+       156 +      };
+       157 +  
+       158 +      // Touch/Mouse handlers for swipe
+       159 +      const handleStart = (clientX: number) => {
+       160 +          isDragging.current = true;
+       161 +          startX.current = clientX;
+       162 +      };
+       163 +  
+       164 +      const handleMove = (clientX: number) => {
+       165 +          if (!isDragging.current || !cardRef.current) return;
+       166 +  
+       167 +          currentX.current = clientX - startX.current;
+       168 +          cardRef.current.style.transform = `translateX(${currentX.current}px) rotate(${currentX.current * 0.1}deg)`;
+       169 +      };
+       170 +  
+       171 +      const handleEnd = () => {
+       172 +          if (!isDragging.current || !cardRef.current) return;
+       173 +          isDragging.current = false;
+       174 +  
+       175 +          const threshold = 100;
+       176 +  
+       177 +          if (currentX.current > threshold) {
+       178 +              handleReview('approve');
+       179 +          } else if (currentX.current < -threshold) {
+       180 +              handleReview('reject');
+       181 +          }
+       182 +  
+       183 +          cardRef.current.style.transform = '';
+       184 +          currentX.current = 0;
+       185 +      };
+       186 +  
+       187 +      const extractVideoId = (url: string): string | null => {
+       188 +          const match = url.match(/\/video\/(\d+)/);
+       189 +          return match ? match[1] : null;
+       190 +      };
+       191 +  
+       192 +      if (loading) {
+       193 +          return (
+       194 +              <div className="flex items-center justify-center h-screen">
+       195 +                  <Loader2 className="w-8 h-8 animate-spin" />
+       196 +              </div>
+       197 +          );
+       198 +      }
+       199 +  
+       200 +      if (!reviewData || reviewData.posts.length === 0) {
+       201 +          return (
+       202 +              <div className="flex flex-col items-center justify-center h-screen gap-4">
+       203 +                  <p className="text-xl">No posts to review</p>
+       204 +                  <Button onClick={() => router.push('/dashboard/owner')}>Back to Dashboard</Button>
+       205 +              </div>
+       206 +          );
+       207 +      }
+       208 +  
+       209 +      const currentPost = reviewData.posts[currentIndex];
+       210 +      const remainingPosts = reviewData.posts.length - currentIndex;
+       211 +  
+       212 +      if (!currentPost) {
+       213 +          return (
+       214 +              <div className="flex flex-col items-center justify-center h-screen gap-4">
+       215 +                  <Check className="w-16 h-16 text-green-500" />
+       216 +                  <p className="text-xl">All posts reviewed!</p>
+       217 +                  <Button onClick={() => router.push('/dashboard/owner')}>Back to Dashboard</Button>
+       218 +              </div>
+       219 +          );
+       220 +      }
+       221 +  
+       222 +      const videoId = extractVideoId(currentPost.postUrl);
+       223 +  
+       224        return (
+       225 -          <div className="relative flex flex-col w-full h-screen justify-center items-center">
+       225 +          <div className="relative flex flex-col w-full h-screen justify-center items-center overflow-hidden bg-black">
+       226                <Drawer>
+       227                    <DrawerTrigger>
+       228 -                      <div className="absolute top-0 right-0">
+       229 -                          <span className="w-[100px] bg-white text-black shadow-lg px-5 py-2 rounded-bl-
+           -  lg border border-gray-500 flex items-center justify-center cursor-pointer">Menu</span>
+       228 +                      <div className="absolute top-4 right-4 z-50">
+       229 +                          <span className="bg-white text-black shadow-lg px-5 py-2 rounded-
+           +  lg border border-gray-500 flex items-center justify-center cursor-pointer">
+       230 +                              Menu
+       231 +                          </span>
+       232                        </div>
+       233                    </DrawerTrigger>
+       234                    <DrawerContent>
+       235                        <DrawerHeader>
+       236 -                          <DrawerTitle>Review Submission</DrawerTitle>
+       236 +                          <DrawerTitle>Review Submission - {reviewData.contest.title}</DrawerTitle>
+       237                            <DrawerDescription>Review submission yang telah di kirim oleh Clipper</DrawerDescription>
+       238                        </DrawerHeader>
+       239 -                      <Card className="flex justify-center items-center rounded-none w-full">
+       240 -                          Sisa submission untuk di review {postCount}
+       241 -                      </Card>
+       239 +                      <div className="px-4 py-2 space-y-4">
+       240 +                          <Card className="p-4">
+       241 +                              <h3 className="font-semibold mb-2">Contest Info</h3>
+       242 +                              <div className="space-y-1 text-sm">
+       243 +                                  <p><strong>Status:</strong> {reviewData.contest.status}</p>
+       244 +                                  <p><strong>Pay per 1000 views:</strong> Rp {parseInt(reviewData.contest.payPerView).toLocaleString()}</p>
+       245 +                                  <p><strong>Max Payout:</strong> Rp {parseInt(reviewData.contest.maxPayout).toLocaleString()}</p>
+       246 +                                  <p><strong>Current Payout:</strong> Rp {parseInt(reviewData.contest.currentPayout).toLocaleString()}</p>
+       247 +                                  <p className="text-green-600"><strong>Remaining Payout:</strong> Rp 
+           + {parseInt(reviewData.contest.remainingPayout).toLocaleString()}</p>
+       248 +                              </div>
+       249 +                          </Card>
+       250 +                          <Card className="p-4 text-center">
+       251 +                              <p className="text-lg font-semibold">{remainingPosts} submission(s) to review</p>
+       252 +                          </Card>
+       253 +                      </div>
+       254                        <DrawerFooter>
+       255 -                          <Button>Ke Beranda</Button>
+       256 -                          {/* <DrawerClose>
+       257 -                              <Button variant="outline" className="w-full">Cancel</Button>
+       258 -                          </DrawerClose> */}
+       255 +                          <Button onClick={() => router.push('/dashboard/owner')}>Ke Beranda</Button>
+       256                        </DrawerFooter>
+       257                    </DrawerContent>
+       258                </Drawer>
+       259 -              <Dialog open={open} onOpenChange={setOpen}>
+       259 +  
+       260 +              <Dialog open={tutorialOpen} onOpenChange={handleTutorialClose}>
+       261                    <DialogContent>
+       262                        <DialogHeader>
+       263                            <DialogTitle>Tutorial Review Submission</DialogTitle>
+       264                            <DialogDescription>
+       265 -                              {isMobile ? (
+       266 -                                  <div className="flex flex-col items-center gap-4 my-10">
+       267 -                                  <div className="flex justify-center items-center gap-4 my-10" role="group" aria-label="Swipe gesture 
+           - demonstrations">
+       265 +                              <div className="flex flex-col items-center gap-4 my-6">
+       266 +                                  <div className="flex justify-center items-center gap-8" role="group" aria-label="Swipe gesture demonstrations">
+       267                                        <div className="text-center flex flex-col justify-center items-center">
+       268 -                                          <Image src="/gifs/swipe-left.gif" className="w-16" alt="Swipe left gesture" width={50} height={50} />
+       269 -                                          <p className="text-sm mt-2">Geser ke kiri (mobile)</p>
+       270 -                                          <p className="text-sm mt-2">Tekan tombol kiri (desktop)</p>
+       271 -                                          <p className="text-sm mt-2 text-red-500 flex items-center"><XIcon /> Tolak</p>
+       268 +                                          <Image src="/gifs/swipe-left.gif" className="w-16" alt="Swipe left gesture" width={64} height={64} />
+       269 +                                          <p className="text-sm mt-2">{isMobile ? 'Geser ke kiri' : 'Tekan tombol kiri'}</p>
+       270 +                                          <p className="text-sm mt-2 text-red-500 flex items-center gap-1"><XIcon className="w-4 h-4" /> Tolak</p>
+       271                                        </div>
+       272                                        <div className="text-center flex flex-col justify-center items-center">
+       273 -                                          <Image src="/gifs/swipe-right.gif" className="w-16" alt="Swipe right gesture" width={50} height={50} />
+       274 -                                          <p className="text-sm mt-2">Geser ke kanan (mobile)</p>
+       275 -                                          <p className="text-sm mt-2">Tekan tombol kanan (desktop)</p>
+       276 -                                          <p className="text-sm mt-2 text-green-500 flex items-center"><Check /> Terima</p>
+       273 +                                          <Image src="/gifs/swipe-right.gif" className="w-16" alt="Swipe right gesture" width={64} height={64} />
+       274 +                                          <p className="text-sm mt-2">{isMobile ? 'Geser ke kanan' : 'Tekan tombol kanan'}</p>
+       275 +                                          <p className="text-sm mt-2 text-green-500 flex items-center gap-1"><Check className="w-4 h-4" /> Terima
+           +  </p>
+       276                                        </div>
+       277                                    </div>
+       278 -                                  </div>
+       279 -                              ) : (
+       280 -                                  <div className="flex flex-col items-center gap-4 my-10">
+       281 -                                  <div className="flex justify-center items-center gap-4 my-10" role="group" aria-label="Swipe gesture 
+           - demonstrations">
+       282 -                                      <div className="text-center flex flex-col justify-center items-center">
+       283 -                                          <Image src="/gifs/swipe-left.gif" className="w-16" alt="Swipe left gesture" width={50} height={50} />
+       284 -                                          <p className="text-sm mt-2">Geser ke kiri (mobile)</p>
+       285 -                                          <p className="text-sm mt-2">Tekan tombol kiri (desktop)</p>
+       286 -                                          <p className="text-sm mt-2 text-red-500 flex items-center"><XIcon /> Tolak</p>
+       287 -                                      </div>
+       288 -                                      <div className="text-center flex flex-col justify-center items-center">
+       289 -                                          <Image src="/gifs/swipe-right.gif" className="w-16" alt="Swipe right gesture" width={50} height={50} />
+       290 -                                          <p className="text-sm mt-2">Geser ke kanan (mobile)</p>
+       291 -                                          <p className="text-sm mt-2">Tekan tombol kanan (desktop)</p>
+       292 -                                          <p className="text-sm mt-2 text-green-500 flex items-center"><Check /> Terima</p>
+       293 -                                      </div>
+       294 -                                  </div>
+       295 -                                      <Card className="flex justify-center items-center rounded-none w-full text-center">
+       296 -                                          <p>Disarankan memakai handphone untuk review submission yang lebih mudah</p>
+       278 +                                  {!isMobile && (
+       279 +                                      <Card className="p-3 text-center w-full">
+       280 +                                          <p className="text-sm">Disarankan memakai handphone untuk review submission yang lebih mudah</p>
+       281                                        </Card>
+       282 -                                  </div>
+       283 -                              )}
+       284 -  
+       282 +                                  )}
+       283 +                              </div>
+       284                            </DialogDescription>
+       285                        </DialogHeader>
+       286 +                      <Button onClick={() => handleTutorialClose(false)}>Mengerti</Button>
+       287                    </DialogContent>
+       288                </Dialog>
+       289 -              <iframe className="size-full" src={`https://www.tiktok.com/player/v1/${videoId}?music_info=0&loop=1&rel=0&native_context_menu=0&close
+           - d_caption=1&description=1&autoplay=1&timestamp=1&audio=1`}></iframe>
+       290 -              {/* <AndroidIframe className="m-auto size-full" videoSrc="https://www.tiktok.com/player/v1/6718335390845095173?music_info=0&loop=1&re
+           - l=0&native_context_menu=0&closed_caption=1&description=1&autoplay=1&timestamp=1&audio=1" /> */}
+       289 +  
+       290 +              {/* Swipe Card */}
+       291 +              <div
+       292 +                  ref={cardRef}
+       293 +                  className={`relative w-full h-full transition-transform duration-300 ${
+       294 +                      swipeDirection === 'left' ? 'translate-x-[-200%] opacity-0' :
+       295 +                      swipeDirection === 'right' ? 'translate-x-[200%] opacity-0' : ''
+       296 +                  }`}
+       297 +                  onTouchStart={(e) => handleStart(e.touches[0].clientX)}
+       298 +                  onTouchMove={(e) => handleMove(e.touches[0].clientX)}
+       299 +                  onTouchEnd={handleEnd}
+       300 +                  onMouseDown={(e) => handleStart(e.clientX)}
+       301 +                  onMouseMove={(e) => isDragging.current && handleMove(e.clientX)}
+       302 +                  onMouseUp={handleEnd}
+       303 +                  onMouseLeave={handleEnd}
+       304 +              >
+       305 +                  {videoId ? (
+       306 +                      <iframe
+       307 +                          className="size-full"
+       308 +                          src={`https://www.tiktok.com/player/v1/${videoId}?music_info=0&loop=1&rel=0&native_context_menu=0&closed_caption=1&descri
+           + ption=1&autoplay=1&timestamp=1&audio=1`}
+       309 +                      />
+       310 +                  ) : (
+       311 +                      <div className="flex items-center justify-center h-full">
+       312 +                          <p className="text-white">Invalid video URL</p>
+       313 +                      </div>
+       314 +                  )}
+       315 +  
+       316 +                  {/* Post info overlay */}
+       317 +                  <div className="absolute bottom-20 left-4 right-4 bg-black/70 text-white p-4 rounded-lg">
+       318 +                      <p className="font-semibold">@{currentPost.clipperUsername || currentPost.clipperName}</p>
+       319 +                      <p className="text-sm">Views: {currentPost.postViews.toLocaleString()}</p>
+       320 +                      <p className="text-sm">Payout: Rp {parseInt(currentPost.postCalculatedAmount).toLocaleString()}</p>
+       321 +                      <p className="text-xs text-gray-300">Level {currentPost.clipperLevel} Clipper</p>
+       322 +                  </div>
+       323 +              </div>
+       324 +  
+       325 +              {/* Action Buttons - Desktop */}
+       326 +              {!isMobile && (
+       327 +                  <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex gap-4 z-40">
+       328 +                      <Button
+       329 +                          variant="destructive"
+       330 +                          size="lg"
+       331 +                          onClick={() => handleReview('reject')}
+       332 +                          disabled={isProcessing}
+       333 +                          className="w-16 h-16 rounded-full"
+       334 +                      >
+       335 +                          <XIcon className="w-8 h-8" />
+       336 +                      </Button>
+       337 +                      <Button
+       338 +                          variant="default"
+       339 +                          size="lg"
+       340 +                          onClick={() => handleReview('approve')}
+       341 +                          disabled={isProcessing}
+       342 +                          className="w-16 h-16 rounded-full bg-green-600 hover:bg-green-700"
+       343 +                      >
+       344 +                          <Check className="w-8 h-8" />
+       345 +                      </Button>
+       346 +                  </div>
+       347 +              )}
+       348 +  
+       349 +              {/* Loading overlay */}
+       350 +              {isProcessing && (
+       351 +                  <div className="absolute inset-0 bg-black/50 flex items-center justify-center z-50">
+       352 +                      <Loader2 className="w-8 h-8 animate-spin text-white" />
+       353 +                  </div>
+       354 +              )}
+       355            </div>
+       356        );
+       357    }
+       358   \ No newline at end of file
+
+● Done! I've implemented the review posts feature with:
+
+  API Routes (app/api/posts/review/route.ts:1)
+
+  - GET: Fetches published posts for review with contest details
+  - PATCH: Approves or rejects posts
+    - Approve: Changes status to "approved"
+    - Reject: Changes status to "rejected" and deducts payout from contest
+
+  Review Posts Page (app/dashboard/owner/review-posts/page.tsx:1)
+
+  - Tinder-style swipe: Drag left to reject, right to approve
+  - Desktop buttons: Click X (reject) or ✓ (approve)
+  - Drawer menu: Shows contest info, remaining payout, and submission count
+  - Tutorial dialog: Shows once using localStorage
+  - Post info overlay: Displays clipper username, views, payout, and level
+  - Auto-navigation: Moves to next post after each review
+
+  The flow works as: clipper submits → auto-published → owner reviews → approve/reject
+
+> see the current payout is that calculated for the approved from owner, see line 212 & 'e:\Projects\Hackaton\Dicoding - 
+ViralSaiki\app\api\posts\review\route.ts', so after the owner approved, than calculated the current payout, that is just my ideam what do you think? 
+
+● I see the issue! Currently in your API at line 212, when you approve a post, you're NOT updating the currentPayout. But when you reject, you're deducting from
+  it.
+
+  This creates a problem because:
+  - Posts are auto-published → currentPayout is already calculated when clipper submits
+  - If owner approves → currentPayout stays the same (correct)
+  - If owner rejects → currentPayout is deducted (correct)
+
+  BUT looking at app/api/posts/route.ts:223, when a clipper submits a post, it's set to status 'published' immediately but the currentPayout in the contest is NOT
+   updated yet.
+
+  So your idea makes sense! The flow should be:
+
+  1. Clipper submits → status: "published" → currentPayout NOT added yet
+  2. Owner approves → status: "approved" → ADD to currentPayout
+  3. Owner rejects → status: "rejected" → currentPayout stays same (nothing to deduct)
+
+  This way:
+  - currentPayout = only approved posts
+  - remainingPayout = accurate budget left
+
+  Should I update the API to add the payout when approving instead of deducting when rejecting?
+
+> yeah fix that 
+
+● Read(app\api\posts\review\route.ts)
+  ⎿  Read 268 lines (ctrl+o to expand)
+
+● Update(app\api\posts\review\route.ts)
+  ⎿  Updated app\api\posts\review\route.ts with 14 additions and 14 removals                                                  
+       210            let updatedPost;
+       211    
+       212            if (action === 'approve') {
+       213 -              // Approve the post - set to approved status
+       213 +              // Approve the post - add payout to contest's current payout
+       214 +              const calculatedAmount = parseFloat(postData.post.calculatedAmount);
+       215 +              const newCurrentPayout = parseFloat(postData.contest.currentPayout) + calculatedAmount;
+       216 +  
+       217                updatedPost = await db
+       218                    .update(posts)
+       219                    .set({
+     ...
+       221                    .where(eq(posts.id, postId))
+       222                    .returning();
+       223    
+       224 -          } else {
+       225 -              // Reject the post - remove from published and deduct payout
+       226 -              const calculatedAmount = parseFloat(postData.post.calculatedAmount);
+       227 -              const newCurrentPayout = Math.max(0, parseFloat(postData.contest.currentPayout) - calculatedAmount);
+       224 +              // Update contest's current payout (add approved post amount)
+       225 +              await db
+       226 +                  .update(contests)
+       227 +                  .set({
+       228 +                      currentPayout: newCurrentPayout.toString(),
+       229 +                      updatedAt: new Date()
+       230 +                  })
+       231 +                  .where(eq(contests.id, postData.contest.id));
+       232    
+       233 +          } else {
+       234 +              // Reject the post - just change status, no payout change needed
+       235                updatedPost = await db
+       236                    .update(posts)
+       237                    .set({
+     ...
+       235                    })
+       236                    .where(eq(posts.id, postId))
+       237                    .returning();
+       238 -  
+       239 -              // Update contest's current payout (deduct rejected post amount)
+       240 -              await db
+       241 -                  .update(contests)
+       242 -                  .set({
+       243 -                      currentPayout: newCurrentPayout.toString(),
+       244 -                      updatedAt: new Date()
+       245 -                  })
+       246 -                  .where(eq(contests.id, postData.contest.id));
+       238            }
+       239    
+       240            return NextResponse.json({
+
+● Fixed! Now the flow is correct:
+
+  app/api/posts/review/route.ts:212-247
+  - Approve: Adds calculatedAmount to contest's currentPayout
+  - Reject: Only changes status, no payout changes
+
+  This means:
+  - currentPayout = sum of only approved posts
+  - remainingPayout = maxPayout - currentPayout (accurate budget left)
+
+> & 'e:\Projects\Hackaton\Dicoding - ViralSaiki\components\contest-details.tsx' & 'e:\Projects\Hackaton\Dicoding - ViralSaiki\app\dashboard\page.tsx', can u see 
+why the progress and percentage not update in the contest-details component? that weird, because the data is right but the ui not displating anything 
+
+● Read(components\contest-details.tsx)
+  ⎿  Read 282 lines (ctrl+o to expand)
+
+● Read(app\dashboard\page.tsx)
+  ⎿  Read 73 lines (ctrl+o to expand)
+
+● I found the issue! Look at components/contest-details.tsx:220 and line 222:
+
+  <Progress value={(parseInt(c.currentPayout!) / parseInt(c.maxPayout!)) || 0} className="h-1.5" />
+  <p className="text-xs text-muted-foreground">
+      {((parseInt(c.currentPayout!) / parseInt(c.maxPayout!)) || 0).toFixed(0)}% • ...
+  </p>
+
+  The problem is:
+  1. c.currentPayout and c.maxPayout are stored as strings (decimal type in DB)
+  2. You need to multiply by 100 to get percentage
+  3. .toFixed(0) gives you "0" when the value is like 0.15 (should be 15%)
+
+  Let me fix it:
+
+● Update(components\contest-details.tsx)
+  ⎿  Updated components\contest-details.tsx with 2 additions and 2 removals                                                                            
+       217                                            <p className="text-sm text-muted-foreground mt-1">
+       218                                                Rp. {c.payPerView?.toLocaleString('id-ID')} / 1000 views
+       219                                            </p>
+       220 -                                          <Progress value={(parseInt(c.currentPayout!) / parseInt(c.maxPayout!)) || 0} className="h-1.5" />
+       220 +                                          <Progress value={((parseFloat(c.currentPayout || '0') / parseFloat(c.maxPayout || '1')) * 100) 
+           +  || 0} className="h-1.5" />
+       221                                            <p className="text-xs text-muted-foreground">
+       222 -                                              {((parseInt(c.currentPayout!) / parseInt(c.maxPayout!)) 
+           -  || 0).toFixed(0)}% • {new Date(c.submissionDeadline!).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' })}
+       222 +                                              {(((parseFloat(c.currentPayout || '0') / parseFloat(c.maxPayout || '1')) * 100) 
+           +  || 0).toFixed(0)}% • {new Date(c.submissionDeadline!).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' })}
+       223                                            </p>
+       224                                        </div>
+       225                                        <DropdownMenu>
+
+● Fixed! The issue was:
+
+  components/contest-details.tsx:220-222
+  - Changed parseInt to parseFloat (since they're decimal strings)
+  - Multiplied by 100 to convert to percentage (0.15 → 15%)
+  - Added fallback values to prevent division by zero
+
+  Now the progress bar and percentage will display correctly when currentPayout increases after approving posts.
+
+
+
+

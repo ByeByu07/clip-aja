@@ -75,7 +75,7 @@ export function SignupForm({
               <div className="flex flex-col items-center text-center">
                 <h1 className="text-2xl font-bold">Sign up</h1>
                 <p className="text-muted-foreground text-balance">
-                  Sign up to your Acme Inc account
+                  Sign up to your Clip Aja account
                 </p>
               </div>
               <div className="grid gap-3">

@@ -45,6 +45,8 @@ const getStatusColor = (status: ContestStatus) => {
 
 export const ContestDetails = ({ contest }: { contest: Contest[] }) => {
 
+    console.log(contest)
+
     const router = useRouter();
     const [selectedContest, setSelectedContest] = useState<string | null>(null);
     const [loadingAction, setLoadingAction] = useState<{ contestId: string; action: string } | null>(null);
@@ -185,7 +187,7 @@ export const ContestDetails = ({ contest }: { contest: Contest[] }) => {
                         <CardContent className="p-4">
                             <div className="flex items-center justify-between gap-4">
                                 {/* Left - Main Info */}
-                                <div className="flex-1 min-w-0">
+                                <div className="flex-1 min-w-0 flex flex-col">
                                     <div className="flex items-center gap-2 mb-1">
                                         <Badge className={cn("text-xs h-5 px-2 capitalize rounded-none", getStatusColor(c.status as ContestStatus))}>
                                             {c.status}
@@ -195,9 +197,16 @@ export const ContestDetails = ({ contest }: { contest: Contest[] }) => {
                                     </div>
                                     <Link
                                         href={`/contests/${c.id}`}
-                                        className="inline-flex items-center gap-1 text-base font-semibold hover:underline"
+                                        className="inline-flex items-center gap-1 text-base font-semibold"
                                     >
                                         {c.title}
+                                        {/* <ArrowRight className="w-3 h-3" /> */}
+                                    </Link>
+                                    <Link
+                                        href={`/dashboard/owner/review-posts?contestId=${c.id}`}
+                                        className="inline-flex items-center gap-1 text-base font-semibold underline"
+                                    >
+                                        Review submission
                                         <ArrowRight className="w-3 h-3" />
                                     </Link>
                                 </div>
@@ -208,9 +217,9 @@ export const ContestDetails = ({ contest }: { contest: Contest[] }) => {
                                         <p className="text-sm text-muted-foreground mt-1">
                                             Rp. {c.payPerView?.toLocaleString('id-ID')} / 1000 views
                                         </p>
-                                        <Progress value={(parseInt(c.currentPayout!) / parseInt(c.maxPayout!)) || 0} className="h-1.5" />
+                                        <Progress value={((parseFloat(c.currentPayout || '0') / parseFloat(c.maxPayout || '1')) * 100) || 0} className="h-1.5" />
                                         <p className="text-xs text-muted-foreground">
-                                            {((parseInt(c.currentPayout!) / parseInt(c.maxPayout!)) || 0).toFixed(0)}% • {new Date(c.submissionDeadline!).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' })}
+                                            {(((parseFloat(c.currentPayout || '0') / parseFloat(c.maxPayout || '1')) * 100) || 0).toFixed(0)}% • {new Date(c.submissionDeadline!).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' })}
                                         </p>
                                     </div>
                                     <DropdownMenu>

@@ -46,7 +46,7 @@ export function ClipperSidebar({ ...props }: React.ComponentProps<typeof Sidebar
               className="data-[slot=sidebar-menu-button]:!p-1.5"
             >
               <Link href="/dashboard/clipper">
-                <span className="text-base font-semibold">Viral Saiki</span>
+                <span className="text-xl font-semibold uppercase text-[Rubik] text-[#fb8500]">Clip Aja</span>
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
