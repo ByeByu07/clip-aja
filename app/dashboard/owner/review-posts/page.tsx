@@ -19,7 +19,7 @@ import {
     DialogHeader,
     DialogTitle,
 } from "@/components/ui/dialog"
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, Suspense } from "react";
 import Image from "next/image";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Check, XIcon, Loader2 } from "lucide-react";
@@ -53,7 +53,7 @@ interface ReviewData {
     totalPendingReview: number;
 }
 
-export default function ReviewPostsPage() {
+function ReviewPostsContent() {
     const searchParams = useSearchParams();
     const router = useRouter();
     const contestId = searchParams.get('contestId');
@@ -351,5 +351,17 @@ export default function ReviewPostsPage() {
                 </div>
             )}
         </div>
+    );
+}
+
+export default function ReviewPostsPage() {
+    return (
+        <Suspense fallback={
+            <div className="flex items-center justify-center h-screen">
+                <Loader2 className="w-8 h-8 animate-spin" />
+            </div>
+        }>
+            <ReviewPostsContent />
+        </Suspense>
     );
 }
