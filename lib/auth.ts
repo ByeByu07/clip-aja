@@ -24,6 +24,7 @@ export const auth = betterAuth({
             clientId: process.env.GOOGLE_CLIENT_ID as string, 
             clientSecret: process.env.GOOGLE_CLIENT_SECRET as string, 
             redirectURI: process.env.NODE_ENV === "development" ? `${process.env.BETTER_AUTH_GOOGLE_URL}/api/auth/callback/google` : `${process.env.NEXT_PUBLIC_APP_URL}/api/auth/callback/google`,
+            prompt: "select_account"
         }, 
     },
     account: {
