@@ -31,7 +31,7 @@ export const auth = betterAuth({
             enabled: true
         }
     },
-    trustedOrigins: ["http://localhost:3000", "https://clipaja.com"],
+    trustedOrigins: ["http://localhost:3000", "https://clipaja.com","https://www.clipaja.com"],
     onError: (error) => {
         console.error(error)
     }
