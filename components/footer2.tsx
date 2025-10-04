@@ -100,6 +100,7 @@ const Footer2 = ({
               </div>
               <p className=" font-bold tracking-wider text-muted-foreground">{copyright}</p>
               <Link href="/privacy-policy" className="underline text-muted-foreground">Privacy Policy</Link>
+              <Link href="/terms-of-service" className="underline text-muted-foreground">Terms of Service</Link>
             </div>
             {/* {menuItems.map((section, sectionIdx) => (
               <div key={sectionIdx}>

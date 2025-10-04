@@ -167,8 +167,8 @@ export function SigninForm({
         </CardContent>
       </Card>
       <div className="text-muted-foreground *:[a]:hover:text-primary text-center text-xs text-balance *:[a]:underline *:[a]:underline-offset-4">
-        By clicking continue, you agree to our <Link href="#">Terms of Service</Link>{" "}
-        and <Link href="#">Privacy Policy</Link>.
+        By clicking continue, you agree to our <Link href="/terms-of-service">Terms of Service</Link>{" "}
+        and <Link href="/privacy-policy">Privacy Policy</Link>.
       </div>
     </div>
   )
