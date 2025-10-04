@@ -148,7 +148,7 @@ export async function POST(
                         category: 'Contest'
                     }],
                     callbacks: {
-                        finish: `${process.env.NEXT_PUBLIC_BASE_URL}/contests/${id}`
+                        finish: `${process.env.NEXT_PUBLIC_APP_URL}/contests/${id}`
                     }
                 });
 

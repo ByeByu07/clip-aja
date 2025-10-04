@@ -150,7 +150,7 @@ export async function POST(request: NextRequest) {
             category: 'Contest'
         }],
         callbacks: {
-            finish: `${process.env.NEXT_PUBLIC_BASE_URL}/contests/${contestId}`
+            finish: `${process.env.NEXT_PUBLIC_APP_URL}/contests/${contestId}`
         }
     });
 
