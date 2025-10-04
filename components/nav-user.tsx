@@ -45,8 +45,8 @@ export function NavUser({
 
   const router = useRouter()
 
-  const handleSignout = () => {
-    authClient.signOut({
+  const handleSignout = async () => {
+    await authClient.signOut({
       fetchOptions: {
         onSuccess: () => {
           toast("Signout successful", {
