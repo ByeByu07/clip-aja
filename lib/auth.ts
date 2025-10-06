@@ -19,7 +19,6 @@ export const auth = betterAuth({
             clientSecret: process.env.TIKTOK_CLIENT_SECRET as string, 
             clientKey: process.env.TIKTOK_CLIENT_KEY as string, 
             redirectURI: process.env.NODE_ENV === "development" ? `${process.env.BETTER_AUTH_TIKTOK_URL}/api/auth/callback/tiktok` : `${process.env.NEXT_PUBLIC_APP_URL}/api/auth/callback/tiktok`,
-            prompt: "select_account"
         },
         google: { 
             clientId: process.env.GOOGLE_CLIENT_ID as string, 
