@@ -22,7 +22,7 @@ export async function middleware(request: NextRequest) {
     }
 
     // If user has no role and not on onboarding page, redirect to onboarding
-    if (!session.user.role && pathname !== "/onboarding") {
+    if (session.user.role === "user" && pathname !== "/onboarding") {
         return NextResponse.redirect(new URL("/onboarding", request.url));
     }
 
