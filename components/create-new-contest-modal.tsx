@@ -7,12 +7,14 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { JSONContent } from '@tiptap/core';
 import Novel from '@/components/ui/novel/novel';
-import { Info } from 'lucide-react';
+import { Info, Sparkles } from 'lucide-react';
 import Image from 'next/image';
 import { Badge } from './ui/badge';
 import { cn } from '@/lib/utils';
 import { useMutation } from '@tanstack/react-query';
 import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
+
+export const maxDuration = 30;
 
 export const CreateNewContestModal = ({ onClose, onContestCreated }: { onClose: () => void, onContestCreated: () => void }) => {
     const [formData, setFormData] = useState({
@@ -147,13 +149,61 @@ export const CreateNewContestModal = ({ onClose, onContestCreated }: { onClose: 
                     {errors.title && <p className="text-red-500 text-sm">{errors.title}</p>}
                 </div>
 
-                <div className="space-y-2">
+                <div className="space-y-2 relative">
                     <Label htmlFor="description">Deskripsi</Label>
-                    <Novel content={description} setContent={(content) => setDescription(content)} placeholder="Deskripsikan kontesmu" />
+
+                    {/* <Button
+                        variant="ghost"
+                        className="absolute top-10 left-5 z-10 group flex items-center gap-2 overflow-hidden transition-all duration-300 rounded-full"
+                    >
+                        <div className='flex-shrink-0 flex items-center gap-2 rounded-full bg-purple-600 px-2 py-1 text-white'>
+                            <Sparkles className="w-4 h-4" />
+                            AI
+                        </div>
+
+                        <span className="max-w-0 group-hover:max-w-xs opacity-0 group-hover:opacity-100 transition-all duration-300 whitespace-nowrap overflow-hidden">
+                            Perbagus dengan AI
+                        </span>
+                    </Button> */}
+
+                    <Novel
+                        content={description}
+                        setContent={(content) => {
+                            setDescription(content);
+                            console.log(content);
+                        }}
+                        placeholder="Deskripsikan kontesmu"
+                    />
                 </div>
 
-                <div className="space-y-2">
+                <div className="space-y-2 relative">
                     <Label htmlFor="requirements">Persyaratan</Label>
+                    {/* <Button
+                        onClick={async () => {
+                        const { text } = await fetch('/api/completion', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: {
+                                "messages": requirements,
+                            },
+                        }).then((res) => res.json());
+
+                        setRequirements(text)
+                    }}
+                        variant="ghost"
+                        className="absolute top-10 left-5 z-10 group flex items-center gap-2 overflow-hidden transition-all duration-300 rounded-full"
+                    >
+                        <div className='flex-shrink-0 flex items-center gap-2 rounded-full bg-purple-600 px-2 py-1 text-white'>
+                            <Sparkles className="w-4 h-4" />
+                            AI
+                        </div>
+
+                        <span className="max-w-0 group-hover:max-w-xs opacity-0 group-hover:opacity-100 transition-all duration-300 whitespace-nowrap overflow-hidden">
+                            Perbagus dengan AI
+                        </span>
+                    </Button> */}
                     <Novel content={requirements} setContent={(content) => setRequirements(content)} placeholder="List any specific requirements for submissions" />
                 </div>
 
@@ -294,14 +344,14 @@ export const CreateNewContestModal = ({ onClose, onContestCreated }: { onClose: 
 
                 <div className="space-y-2">
                     <Label htmlFor="minViews">Minimum Views
-                    <Tooltip>
-                                <TooltipTrigger>
-                                    <Info className="inline h-4" />
-                                </TooltipTrigger>
-                                <TooltipContent>
-                                    <p>Minimal views yang diperlukan untuk kontes ini</p>
-                                </TooltipContent>
-                            </Tooltip>
+                        <Tooltip>
+                            <TooltipTrigger>
+                                <Info className="inline h-4" />
+                            </TooltipTrigger>
+                            <TooltipContent>
+                                <p>Minimal views yang diperlukan untuk kontes ini</p>
+                            </TooltipContent>
+                        </Tooltip>
                     </Label>
                     <Input
                         id="minViews"

@@ -7,6 +7,7 @@ import {
     List,
     ListOrdered,
     MessageSquarePlus,
+    Pencil,
     Text,
     TextQuote,
   } from "lucide-react";
@@ -15,6 +16,30 @@ import {
   import { Command, renderItems } from "novel";
   
   export const suggestionItems = createSuggestionItems([
+    {
+      title: "AI",
+      description: "Tulis dengan AI",
+      icon: <Pencil size={18} />,
+      command: async ({ editor, range }) => {
+
+        const input = prompt("Masukkan Text (output ai berupa text saja)");
+
+        if (!input) return;
+
+        const text = await fetch('/api/completion', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ messages: input }),
+        });
+
+        const data = await text.json();
+
+        await editor.chain().focus().deleteRange(range).insertContent(data.text).run();
+        
+      },
+    },
     {
       title: "Send Feedback",
       description: "Let us know how we can improve.",
