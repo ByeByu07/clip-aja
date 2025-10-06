@@ -194,7 +194,7 @@ export default function Page() {
                     Kamu belum submit konten ke contest manapun.
                   </p>
                   <Button asChild>
-                    <Link href="/dashboard/clipper/contests">
+                    <Link href="/contests">
                       Cari Contest
                     </Link>
                   </Button>
