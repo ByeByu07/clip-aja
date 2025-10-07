@@ -7,6 +7,17 @@ import { Plus, Loader2 } from "lucide-react"
 import { SiTiktok } from "react-icons/si"
 import { useEffect, useState } from "react"
 import Image from "next/image"
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
 
 interface Account {
     id: string
@@ -23,6 +34,7 @@ export default function Page() {
 
     const [accounts, setAccounts] = useState<Account[]>([])
     const [isLoading, setIsLoading] = useState(true)
+    const [open, setOpen] = useState(false)
 
     const handleAddNewTiktokAccount = async () => {
         await authClient.linkSocial({
@@ -70,11 +82,33 @@ export default function Page() {
     };
 
     useEffect(() => {
+        setTimeout(() => {
+            setOpen(true)
+        }, 1000)
         loadAccounts()
     }, [])
 
     return (
         <>
+            <AlertDialog open={open} onOpenChange={setOpen}>
+                {/* <AlertDialogTrigger>Open</AlertDialogTrigger> */}
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Perlu mencoba ini?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            Hubungi admin untuk menambahkan email akun tiktok karena fitur masih dalam masa review tiktok.
+                            <br />
+                            <br />
+                            <a className="underline underline-offset-4" href="mailto:muhammadbaharuddin08123@gmail.com">
+                                <span className="font-semibold">muhammadbaharuddin08123@gmail.com</span>
+                            </a>
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogAction>Oke</AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
             <div className="@container/main flex flex-1 flex-col gap-2 px-4">
                 <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
                     <div className="flex flex-col gap-4">
